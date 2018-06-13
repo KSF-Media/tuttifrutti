@@ -1,0 +1,70 @@
+name:                tuttifrutti
+version:             0.1.0.0
+synopsis:            Components for KSF Media services
+description:         Ready-made components to quickly build KSF Media services
+github:              KSF-Media/tuttifrutti
+license:             BSD3
+license-file:        LICENSE
+author:              Fabrizio Ferrai
+maintainer:          fabrizio.ferrai@gmail.com
+copyright:           2018 KSF Media
+category:            Web
+
+extra-source-files:
+- README.md
+
+dependencies:
+- base >= 4.7 && < 5
+- rio
+# Servant things
+- servant
+- servant-server
+- servant-client
+- servant-swagger
+
+library:
+  source-dirs: src
+
+default-extensions:
+- AutoDeriveTypeable
+- BangPatterns
+- BinaryLiterals
+- ConstraintKinds
+- DataKinds
+- DefaultSignatures
+- DeriveAnyClass
+- DeriveDataTypeable
+- DeriveFoldable
+- DeriveFunctor
+- DeriveGeneric
+- DeriveTraversable
+- DoAndIfThenElse
+- EmptyDataDecls
+- ExistentialQuantification
+- FlexibleContexts
+- FlexibleInstances
+- FunctionalDependencies
+- GADTs
+- GeneralizedNewtypeDeriving
+- InstanceSigs
+- KindSignatures
+- LambdaCase
+- MonadFailDesugaring
+- MultiParamTypeClasses
+- MultiWayIf
+- NamedFieldPuns
+- NoImplicitPrelude
+- OverloadedStrings
+- PartialTypeSignatures
+- PatternGuards
+- PolyKinds
+- RankNTypes
+- RecordWildCards
+- ScopedTypeVariables
+- StandaloneDeriving
+- TupleSections
+- TypeFamilies
+- TypeOperators
+- TypeSynonymInstances
+- ViewPatterns
+
