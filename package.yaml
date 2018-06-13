@@ -15,7 +15,17 @@ extra-source-files:
 
 dependencies:
 - base >= 4.7 && < 5
+- basic-prelude
+- unliftio
 - rio
+- data-has
+- these
+- contravariant
+- aeson
+- mtl
+- transformers
+- errors
+- exceptions
 # Servant things
 - servant
 - servant-server
