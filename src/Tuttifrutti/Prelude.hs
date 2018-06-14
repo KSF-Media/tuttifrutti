@@ -1,5 +1,8 @@
 module Tuttifrutti.Prelude
-  ( module X ) where
+  ( module X 
+  , module Tuttifrutti.Prelude
+  ) 
+  where
 
 import           Control.Applicative        as X (Alternative, empty, (<|>))
 import           Control.Error              as X (hush)
@@ -53,3 +56,7 @@ import           UnliftIO                   as X (MonadUnliftIO)
 import           UnliftIO.Exception         as X (Exception, bracket, catch, catchAny, finally,
                                                   handle, onException, throwIO, throwString, try)
 import           Web.HttpApiData            as X (FromHttpApiData, ToHttpApiData)
+
+with :: env -> ReaderT env m a -> m a
+with = flip runReaderT
+
