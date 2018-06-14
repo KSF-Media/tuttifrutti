@@ -61,3 +61,14 @@ import           Web.HttpApiData            as X (FromHttpApiData, ToHttpApiData
 with :: env -> ReaderT env m a -> m a
 with = flip runReaderT
 
+
+onNothing :: Applicative m => m a -> Maybe a -> m a
+onNothing m = maybe m pure
+
+onLeft :: Applicative m => (l -> m r) -> Either l r -> m r
+onLeft f = either f pure
+
+-- | Execute action and throw exception if the result is 'Left'
+throwLeft :: (Exception e, MonadThrow m) => m (Either e b) -> m b
+throwLeft m = m >>= onLeft throwM
+
