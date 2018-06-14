@@ -17,10 +17,10 @@ import           Control.Monad.Reader       as X (MonadReader (..), Reader, Read
                                                   mapReaderT, runReader, runReaderT, withReaderT)
 import           Control.Monad.Trans        as X (MonadTrans, lift)
 import           Control.Monad.Trans.Maybe  as X (MaybeT (..), exceptToMaybeT, maybeToExceptT)
-import           CorePrelude                as X
+import           CorePrelude                as X hiding (first, second)
 import           Data.Aeson                 as X (FromJSON (..), ToJSON (..), object, (.=))
 import           Data.Align                 as X (align, alignWith)
-import           Data.Bifunctor             as X (bimap)
+import           Data.Bifunctor             as X (bimap, first, second)
 import           Data.Data                  as X (Data)
 import           Data.Either                as X (isLeft, isRight)
 import           Data.Foldable              as X (asum, fold, forM_, for_, sequence_, toList,
