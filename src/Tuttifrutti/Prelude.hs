@@ -6,6 +6,7 @@ module Tuttifrutti.Prelude
 
 import           Control.Applicative        as X (Alternative, empty, (<|>))
 import           Control.Error              as X (hush)
+import           Control.Lens               as X (set, view, (.~), (<&>), (?~), (^.), (^?), _Just)
 import           Control.Monad              as X (guard, join, mfilter, mzero, replicateM, unless,
                                                   void, when, (<=<), (>=>))
 import           Control.Monad.Catch        as X (MonadCatch, MonadMask (..), MonadThrow (..))
