@@ -52,3 +52,4 @@ import           Text.Read                  as X (readEither, readMaybe)
 import           UnliftIO                   as X (MonadUnliftIO)
 import           UnliftIO.Exception         as X (Exception, bracket, catch, catchAny, finally,
                                                   handle, onException, throwIO, throwString, try)
+import           Web.HttpApiData            as X (FromHttpApiData, ToHttpApiData)
