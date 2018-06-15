@@ -1,15 +1,17 @@
 module Tuttifrutti.Prelude
-  ( module X 
+  ( module X
   , module Tuttifrutti.Prelude
-  ) 
+  )
   where
+
+import           RIO                        as X hiding (Handle, Handler, first, logError, logInfo,
+                                                  logWarn, over, second, set, view, (<>), (^.))
 
 import           Control.Applicative        as X (Alternative, empty, (<|>))
 import           Control.Error              as X (hush)
 import           Control.Lens               as X (set, view, (.~), (<&>), (?~), (^.), (^?), _Just)
 import           Control.Monad              as X (guard, join, mfilter, mzero, replicateM, unless,
                                                   void, when, (<=<), (>=>))
-import           Control.Monad.Catch        as X (MonadCatch, MonadMask (..), MonadThrow (..))
 import           Control.Monad.Except       as X (ExceptT (..), MonadError, catchError, runExceptT,
                                                   throwError)
 import           Control.Monad.Identity     as X (Identity (..))
@@ -18,7 +20,6 @@ import           Control.Monad.Reader       as X (MonadReader (..), Reader, Read
                                                   mapReaderT, runReader, runReaderT, withReaderT)
 import           Control.Monad.Trans        as X (MonadTrans, lift)
 import           Control.Monad.Trans.Maybe  as X (MaybeT (..), exceptToMaybeT, maybeToExceptT)
-import           CorePrelude                as X hiding (first, second)
 import           Data.Aeson                 as X (FromJSON (..), ToJSON (..), object, (.=))
 import           Data.Align                 as X (align, alignWith)
 import           Data.Bifunctor             as X (bimap, first, second)
@@ -45,7 +46,6 @@ import           GHC.Exts                   as X (fromList)
 import           GHC.Generics               as X (Generic)
 import           GHC.OverloadedLabels       as X (IsLabel (fromLabel))
 import           GHC.TypeLits               as X (KnownSymbol, Symbol, symbolVal)
-import           RIO                        as X (Hashable, lookup)
 import           RIO.ByteString             as X (ByteString)
 import           RIO.Map                    as X (Map)
 import           RIO.Set                    as X (Set)
@@ -57,6 +57,7 @@ import           UnliftIO                   as X (MonadUnliftIO)
 import           UnliftIO.Exception         as X (Exception, bracket, catch, catchAny, finally,
                                                   handle, onException, throwIO, throwString, try)
 import           Web.HttpApiData            as X (FromHttpApiData, ToHttpApiData)
+
 
 with :: env -> ReaderT env m a -> m a
 with = flip runReaderT
