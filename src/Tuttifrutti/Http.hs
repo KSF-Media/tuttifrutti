@@ -3,6 +3,7 @@
 --   Abstracts the way the http requests are performed to allow
 --   mocking, caching and intercepting them without touching
 --   the business code.
+{-# LANGUAGE CPP                        #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings          #-}
 module Tuttifrutti.Http
@@ -34,6 +35,10 @@ import           Network.HTTP.Simple         (setRequestQueryString)
 
 import           Tuttifrutti.Http.Handle
 import qualified Tuttifrutti.Log             as Log
+
+#if !(MIN_VERSION_conduit(1,3,0))
+type ConduitT = ConduitM
+#endif
 
 -- | Constraint that captures the environments that are capable of performing
 --   real or emulated http requests.
