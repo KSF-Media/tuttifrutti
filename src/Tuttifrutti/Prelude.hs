@@ -12,6 +12,7 @@ import           Control.Error              as X (hush)
 import           Control.Lens               as X (set, view, (.~), (<&>), (?~), (^.), (^?), _Just)
 import           Control.Monad              as X (guard, join, mfilter, mzero, replicateM, unless,
                                                   void, when, (<=<), (>=>))
+import           Control.Monad.Catch        as X (MonadMask)
 import           Control.Monad.Except       as X (ExceptT (..), MonadError, catchError, runExceptT,
                                                   throwError)
 import           Control.Monad.Identity     as X (Identity (..))

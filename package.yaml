@@ -28,6 +28,7 @@ dependencies:
 - errors
 - exceptions
 - lens
+- conduit
 # Logging
 - fast-logger
 - template
@@ -41,6 +42,11 @@ dependencies:
 - servant-swagger
 # Http
 - http-api-data
+- http-types
+- http-client
+- http-conduit
+- data-vcr
+- http-client-vcr
 
 library:
   source-dirs: src

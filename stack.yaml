@@ -1,5 +1,13 @@
 resolver: lts-11.13
 packages:
 - .
+- location:
+    git: https://github.com/KSF-Media/haskell-vcr
+    commit: 71a30452e4dd8ef6b9a0d615d2729e4b1ec01b3a
+    subdirs:
+      - data-vcr
+      - tasty-vcr
+      - http-client-vcr
+  extra-dep: true
 nix:
   enable: true
