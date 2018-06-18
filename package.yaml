@@ -15,17 +15,25 @@ extra-source-files:
 
 dependencies:
 - base >= 4.7 && < 5
+- time
+- text
+- bytestring
 - unliftio
 - rio
 - data-has
 - these
 - contravariant
-- aeson
 - mtl
 - transformers
 - errors
 - exceptions
 - lens
+# Logging
+- fast-logger
+- template
+# Serialization formats
+- aeson
+- aeson-pretty
 # Servant things
 - servant
 - servant-server
