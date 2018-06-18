@@ -2,6 +2,7 @@ module Tuttifrutti.Log
   ( MonadLog
   , localData
   , localDomain
+  , logMessage, logMessageNow
   , logTrace, logTrace_
   , logInfo, logInfo_
   , logWarning, logWarning_
