@@ -29,6 +29,7 @@ dependencies:
 - exceptions
 - lens
 - conduit
+- insert-ordered-containers
 # Logging
 - fast-logger
 - template
@@ -40,6 +41,7 @@ dependencies:
 - servant-server
 - servant-client
 - servant-swagger
+- swagger2
 # Http
 - http-api-data
 - http-types
