@@ -1,3 +1,4 @@
+{-# LANGUAGE DerivingStrategies #-}
 module Tuttifrutti.Http.Handle
   ( Handle(..)
   , newNetworkHandle
@@ -59,6 +60,7 @@ newNetworkHandle settings = do
 
 newtype RequestId = RequestId Text
   deriving (Show)
+  deriving newtype (ToJSON)
 
 -- | Make it so that every outgoing request contains the X-Request-ID header with a given value.
 addXRequestId :: (Has Handle env) => RequestId -> env -> env
