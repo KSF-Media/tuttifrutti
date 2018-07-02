@@ -31,6 +31,8 @@ dependencies:
 - conduit
 - conduit-combinators # remove once we quit old conduit
 - insert-ordered-containers
+- case-insensitive
+- uuid
 # Logging
 - fast-logger
 - template
@@ -44,6 +46,8 @@ dependencies:
 - servant-swagger
 - swagger2
 # Http
+- wai
+- wai-extra
 - http-api-data
 - http-types
 - http-client
@@ -63,12 +67,12 @@ default-extensions:
 - ConstraintKinds
 - DataKinds
 - DefaultSignatures
-- DeriveAnyClass
 - DeriveDataTypeable
 - DeriveFoldable
 - DeriveFunctor
 - DeriveGeneric
 - DeriveTraversable
+- DerivingStrategies
 - DoAndIfThenElse
 - EmptyDataDecls
 - ExistentialQuantification
