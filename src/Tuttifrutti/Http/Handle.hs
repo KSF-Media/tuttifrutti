@@ -7,6 +7,7 @@ module Tuttifrutti.Http.Handle
 
 import           Tuttifrutti.Prelude
 
+import           Control.Lens                (over)
 import qualified Data.Has                    as Has
 import qualified Data.Text.Encoding          as Text
 import qualified Data.Vcr                    as Vcr
@@ -19,6 +20,7 @@ import qualified Network.HTTP.Types.Status   as Http
 
 import           Tuttifrutti.Log             as Log
 import qualified Tuttifrutti.Log.Handle      as Log
+import           Tuttifrutti.RequestId       (RequestId (..), requestIdHeader)
 
 -- | Primitives that has to be implemented in order to support 'MonadHttp'.
 data Handle = Handle
@@ -57,18 +59,15 @@ newNetworkHandle settings = do
     resInfo res =
       [ "status" .= Http.statusCode (Http.responseStatus res) ]
 
-newtype RequestId = RequestId Text
-  deriving (Show)
-
 -- | Make it so that every outgoing request contains the X-Request-ID header with a given value.
+--   Wouldn't overwrite existing X-Request-ID header.
 addXRequestId :: (Has Handle env) => RequestId -> env -> env
-addXRequestId (RequestId requestId) = Has.modifier $ \h@Handle{..} -> h
+addXRequestId requestId = Has.modifier $ \h@Handle{..} -> h
   { openResponse_ = \logHandle rq ->
       openResponse_ logHandle rq
         { Http.requestHeaders =
-            if isJust $ lookup "X-Request-ID" $ Http.requestHeaders rq
-            then Http.requestHeaders rq
-            else Http.requestHeaders rq <> [("X-Request-ID", Text.encodeUtf8 requestId)]
+            Http.requestHeaders rq
+              & over requestIdHeader (Just . fromMaybe requestId)
          }
   }
 
