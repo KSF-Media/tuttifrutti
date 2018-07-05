@@ -9,5 +9,7 @@ packages:
       - tasty-vcr
       - http-client-vcr
   extra-dep: true
+extra-deps:
+- rapid-0.1.4
 nix:
   enable: true

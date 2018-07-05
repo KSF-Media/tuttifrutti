@@ -33,6 +33,8 @@ dependencies:
 - insert-ordered-containers
 - case-insensitive
 - uuid
+# Development
+- rapid
 # Logging
 - fast-logger
 - template
