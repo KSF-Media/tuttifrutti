@@ -14,6 +14,9 @@ data Module env = Module
   , withDevEnv :: forall a. (env -> IO a) -> IO a
   }
 
+runRioDev :: Module env -> RIO env a -> IO a
+runRioDev h m = withDevEnv h $ \env -> runRIO env m
+
 data Config env = Config
   { createEnv  :: IO env
   , destroyEnv :: env -> IO ()
