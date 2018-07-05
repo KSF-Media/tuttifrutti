@@ -3,29 +3,33 @@ module Tuttifrutti.Servant where
 
 import           Tuttifrutti.Prelude
 
-import qualified Network.Wai         as Wai
+import qualified Network.Wai            as Wai
 
-import           Servant             (Handler (..), HasServer, ServerT, hoistServer, runHandler,
-                                      serve)
+import           Servant                (Handler (..), HasServer, ServerT, hoistServer, runHandler,
+                                         serve)
 
-import           Tuttifrutti.Http    (MonadHttp)
-import           Tuttifrutti.Log     (MonadLog)
-import           Tuttifrutti.Wai     (requestLogger, withXRequestId)
+import qualified Tuttifrutti.Http       as Http
+import qualified Tuttifrutti.Log.Handle as Log
+import           Tuttifrutti.Wai        (requestLogger, withXRequestId)
 
 -- | Serve an API with all possible fruits enabled out-of-box.
+--   Can be used as follows:
+--
+--       app :: Env -> Wai.Application
+--       app env = fruttyRioApp @Api env server
+--
 fruttyRioApp
-  :: forall (api :: *) env m.
+  :: forall (api :: *) env.
      ( HasServer api '[]
-     , MonadHttp env m
-     , MonadLog env m
+     , Has Http.Handle env
+     , Has Log.Handle  env
      )
-  => Proxy api
-  -> env
+  => env
   -> ServerT api (RIO env)
   -> Wai.Application
-fruttyRioApp api env server =
+fruttyRioApp env server =
   requestLogger env $ \requestId ->
-    rioAppWith api (withXRequestId requestId) env server
+    rioAppWith (Proxy @api) (withXRequestId requestId) env server
 
 -- | Serve an app with given transformations.
 rioAppWith
