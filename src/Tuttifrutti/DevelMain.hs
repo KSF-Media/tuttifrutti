@@ -8,13 +8,13 @@ import qualified Rapid
 import qualified Tuttifrutti.Log.Handle as Log
 
 -- | A first-class DevelMain module. These fields can be binded to the top level of app's DevelMain module.
-data Module env = Module
+data Handle env = Handle
   { update     :: IO ()
   , kill       :: IO ()
   , withDevEnv :: forall a. (env -> IO a) -> IO a
   }
 
-runRioDev :: Module env -> RIO env a -> IO a
+runRioDev :: Handle env -> RIO env a -> IO a
 runRioDev h m = withDevEnv h $ \env -> runRIO env m
 
 data Config env = Config
@@ -24,12 +24,12 @@ data Config env = Config
   }
 
 -- | Create a new 'DevelMain' module.
-newDevelMain
+newHandle
   :: forall env. (Typeable env, Has Log.Handle env)
   => Word32 -- ^ rapid id
   -> Config env
-  -> Module env
-newDevelMain rapidId Config{..} = Module{..}
+  -> Handle env
+newHandle rapidId Config{..} = Handle{..}
   where
     update :: IO ()
     update = do
@@ -61,3 +61,6 @@ newDevelMain rapidId Config{..} = Module{..}
          newIORef =<< createEnv
         env <- readIORef envRef
         m env `finally` Log.waitHandle (Has.getter env)
+
+closeHandle :: Handle env -> IO ()
+closeHandle = kill
