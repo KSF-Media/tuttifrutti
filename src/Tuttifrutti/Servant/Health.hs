@@ -1,22 +1,15 @@
-module Tuttifrutti.Health where
+module Tuttifrutti.Servant.Health where
 
 import RIO
 import Servant
 
 type Api =
-  RootApi
-    :<|>
-  HealthApi
-
-type RootApi = Get '[JSON] Text
-
-type HealthApi =
   "healthz"
     :> Summary "Health endpoint"
     :> Get '[JSON] Text
 
 server :: Applicative m => ServerT Api m
-server = ok :<|> ok
+server = ok
 
 ok :: Applicative m => m Text
 ok = pure "OK"
