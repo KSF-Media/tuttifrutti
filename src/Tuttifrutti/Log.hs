@@ -54,7 +54,7 @@ logMessage t severity msg payload = do
   Handle{..} <- asks Has.getter
   liftIO $ FastLogger.pushLogStrLn handleLoggerSet $ handleFormat LogEntry
     { logEntryMessage   = interpolatedMessage msg $ Json.object payload
-    , logEntryData      = payload
+    , logEntryData      = handleData <> payload
     , logEntrySeverity  = severity
     , logEntryTimestamp = t
     , logEntryComponent = handleComponent
