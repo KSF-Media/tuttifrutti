@@ -11,3 +11,11 @@ import           Data.Swagger
 dereferenceSchemas :: Definitions Schema -> Swagger -> Swagger
 dereferenceSchemas defs =
   over definitions (`InsOrd.difference` defs) . inlineAllSchemas defs
+
+-- | A schema with only one possible value.
+--
+--   Until https://github.com/OAI/OpenAPI-Specification/issues/1313 is
+--   resolved, this is shimmed with a single-value enum.
+constSchema :: forall a. ToSchema a => Proxy a -> Schema
+constSchema a =
+  toSchema a & enum_ .~  Just [ toJSON a ]
