@@ -16,6 +16,6 @@ dereferenceSchemas defs =
 --
 --   Until https://github.com/OAI/OpenAPI-Specification/issues/1313 is
 --   resolved, this is shimmed with a single-value enum.
-constSchema :: forall a. ToSchema a => Proxy a -> Schema
+constSchema :: forall a. (ToSchema a, ToJSON a) => a -> Schema
 constSchema a =
-  toSchema a & enum_ .~  Just [ toJSON a ]
+  toSchema @a Proxy & enum_ .~  Just [ toJSON a ]
