@@ -33,6 +33,7 @@ dependencies:
 - insert-ordered-containers
 - case-insensitive
 - uuid
+- psqueues
 # Development
 - rapid
 # Logging
@@ -47,6 +48,15 @@ dependencies:
 - servant-client
 - servant-swagger
 - swagger2
+# Database
+- monad-logger
+- postgresql-simple
+- persistent
+- persistent-template
+- persistent-postgresql
+- resource-pool
+# Environment variables
+- envy
 # Http
 - wai
 - wai-extra
