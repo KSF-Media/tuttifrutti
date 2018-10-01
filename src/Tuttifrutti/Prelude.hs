@@ -5,7 +5,7 @@ module Tuttifrutti.Prelude
   where
 
 import           RIO                        as X hiding (Handle, Handler, first, logError, logInfo,
-                                                  logWarn, over, second, set, view, (<>), (^.))
+                                                  logWarn, over, second, set, view, (<>), (^.), LogFunc)
 
 import           Control.Applicative        as X (Alternative, empty, (<|>))
 import           Control.Error              as X (hush)
