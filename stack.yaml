@@ -1,4 +1,4 @@
-resolver: lts-11.13
+resolver: lts-12.10
 packages:
 - .
 - location:
@@ -9,7 +9,12 @@ packages:
       - tasty-vcr
       - http-client-vcr
   extra-dep: true
+allow-newer: true
 extra-deps:
 - rapid-0.1.4
+- template-0.2.0.10
 nix:
-  enable: true
+  enable: false
+  packages:
+  - postgresql
+  - zlib
