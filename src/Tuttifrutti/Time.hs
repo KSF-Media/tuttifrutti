@@ -7,6 +7,9 @@ module Tuttifrutti.Time
   , isToday
   , localFakeTime
   , localFrozenTime
+  , nominalHour
+  , nominalMinute
+  , nominalSecond
   ) where
 
 import           Tuttifrutti.Prelude
@@ -64,3 +67,12 @@ localFrozenTime :: MonadTime env m => Time.UTCTime -> m a -> m a
 localFrozenTime frozenAt m = do
   fakeTime <- newFrozenTime frozenAt
   local (Has.modifier (const fakeTime)) m
+
+nominalHour :: Time.NominalDiffTime
+nominalHour = nominalMinute * 60
+
+nominalMinute :: Time.NominalDiffTime
+nominalMinute = 60
+
+nominalSecond :: Time.NominalDiffTime
+nominalSecond = 1
