@@ -68,7 +68,7 @@ fromMaybeM :: Applicative m => m a -> Maybe a -> m a
 fromMaybeM m = maybe m pure
 
 onNothing :: Applicative m => Maybe a -> m a -> m a
-onNothing m = flip fromMaybeM
+onNothing = flip fromMaybeM
 
 onLeft :: Applicative m => (l -> m r) -> Either l r -> m r
 onLeft f = either f pure
