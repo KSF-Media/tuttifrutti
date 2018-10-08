@@ -23,7 +23,7 @@ requestLogger env =
       requestId <- do
         Wai.requestHeaders req
           & view RequestId.requestIdHeader
-          & onNothing RequestId.random
+          & fromMaybeM RequestId.random
       with env
         $ Log.localDomain "http-server"
         $ Log.logInfo "Incoming HTTP request: $method $path"
