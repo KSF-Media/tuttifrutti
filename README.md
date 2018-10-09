@@ -1,5 +1,7 @@
 # Tuttifrutti 🥝🍓🍒🍊🍌🍉
 
+![Gitlab CI pipeline status](https://gitlab.com/nilrecurring/tuttifrutti/badges/master/build.svg)
+
 Tuttifrutti is a framework/helper-collection/kitchen-sink library to quickly bootstrap new (micro)services at KSF Media.
 
 ## Howto
