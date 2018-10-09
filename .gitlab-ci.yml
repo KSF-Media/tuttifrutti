@@ -1,4 +1,4 @@
-image: ksfmedia/diskho:lts-12.7
+image: fpco/stack-build:lts-12.12
 
 stages:
   - build
