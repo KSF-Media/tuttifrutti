@@ -10,13 +10,13 @@ import           Tuttifrutti.Prelude
 import           Control.Lens                (over)
 import qualified Data.Has                    as Has
 import qualified Data.Text.Encoding          as Text
+import qualified Data.Time.Clock             as Time
 import qualified Data.Vcr                    as Vcr
 import           Network.HTTP.Client         (BodyReader, responseClose, responseOpen)
 import qualified Network.HTTP.Client         as Http
 import           Network.HTTP.Client.Conduit (Request, Response)
 import qualified Network.HTTP.Client.Vcr     as Vcr
 import qualified Network.HTTP.Types.Status   as Http
-
 
 import           Tuttifrutti.Log             as Log
 import qualified Tuttifrutti.Log.Handle      as Log
@@ -41,8 +41,11 @@ newNetworkHandle settings = do
     { openResponse_ = \logHandle req ->
         with logHandle $ Log.localDomain "http-client" $ do
           Log.logTrace "sending request" $ reqInfo req
+          requestedAt <- liftIO Time.getCurrentTime
           res <- liftIO $ responseOpen req manager
-          Log.logTrace "response opened" $ reqInfo req <> resInfo res
+          respondedAt <- liftIO Time.getCurrentTime
+          Log.logTrace "response opened" $ reqInfo req <> resInfo res <>
+            [ "ttfb" .= respondedAt `Time.diffUTCTime` requestedAt ]
           pure res
     , closeResponse_ = \logHandle res ->
         with logHandle $ Log.localDomain "http-client" $ do
