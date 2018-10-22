@@ -5,7 +5,7 @@ module Tuttifrutti.Prelude
   where
 
 import           RIO                        as X hiding (Handle, Handler, first, logError, logInfo,
-                                                  logWarn, over, second, set, view, (<>), (^.))
+                                                  logWarn, over, second, set, view, (<>), (^.), LogFunc)
 
 import           Control.Applicative        as X (Alternative, empty, (<|>))
 import           Control.Error              as X (hush)
@@ -64,8 +64,11 @@ with :: env -> ReaderT env m a -> m a
 with = flip runReaderT
 
 
-onNothing :: Applicative m => m a -> Maybe a -> m a
-onNothing m = maybe m pure
+fromMaybeM :: Applicative m => m a -> Maybe a -> m a
+fromMaybeM m = maybe m pure
+
+onNothing :: Applicative m => Maybe a -> m a -> m a
+onNothing = flip fromMaybeM
 
 onLeft :: Applicative m => (l -> m r) -> Either l r -> m r
 onLeft f = either f pure

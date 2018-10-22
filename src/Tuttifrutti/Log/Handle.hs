@@ -4,7 +4,7 @@ module Tuttifrutti.Log.Handle
   , newHandle, waitHandle, closeHandle
   , newStdoutHandle, newFileHandle
   , googleMessage, devMessage
-  )where
+  ) where
 
 import           Tuttifrutti.Prelude
 
@@ -48,28 +48,30 @@ data Handle = Handle
   , handleData      :: [Json.Pair]
   }
 
-newHandle :: (LogEntry -> FastLogger.LogStr) -> FastLogger.LoggerSet -> Handle
-newHandle handleFormat handleLoggerSet = Handle{..}
+newHandle :: (LogEntry -> FastLogger.LogStr) -> Text -> FastLogger.LoggerSet -> Handle
+newHandle handleFormat handleComponent handleLoggerSet = Handle{..}
   where
-    handleComponent = "faro"
     handleDomain    = []
     handleData      = []
 
 newStdoutHandle
-  :: (LogEntry -> FastLogger.LogStr)
+  :: Text
+  -> (LogEntry -> FastLogger.LogStr)
   -> IO Handle
-newStdoutHandle handleFormat =
-  newHandle handleFormat <$> do
+newStdoutHandle handleComponent handleFormat =
+  newHandle handleFormat handleComponent <$> do
     -- setup an async logger, when the main thread is killed 'closeHandle'
     -- must be called to ensure that everything has been written
     FastLogger.newStdoutLoggerSet FastLogger.defaultBufSize
 
 newFileHandle
   :: FilePath
+  -> Text
   -> (LogEntry -> FastLogger.LogStr)
   -> IO Handle
-newFileHandle path formatLogEntry = do
-  newHandle formatLogEntry <$> FastLogger.newFileLoggerSet FastLogger.defaultBufSize path
+newFileHandle path handleComponent formatLogEntry = do
+  newHandle formatLogEntry handleComponent
+    <$> FastLogger.newFileLoggerSet FastLogger.defaultBufSize path
 
 
 -- | Print json logs to Stackdriver.

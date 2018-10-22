@@ -1,0 +1,13 @@
+image: fpco/stack-build:lts-12.12
+
+stages:
+  - build
+
+build:
+  stage: build
+  cache:
+    key: "tuttifrutti-build"
+    paths:
+      - .stack-work/
+  script:
+    - stack build --fast
