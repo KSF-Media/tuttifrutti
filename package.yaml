@@ -35,6 +35,8 @@ dependencies:
 - uuid
 - psqueues
 - retry
+- range
+- store
 # Development
 - rapid
 # Logging
