@@ -1,4 +1,3 @@
-{-# LANGUAGE BangPatterns #-}
 module Tuttifrutti.Cache where
 
 import           Tuttifrutti.Prelude
@@ -8,35 +7,49 @@ import           Data.Store                         (Store)
 import qualified Tuttifrutti.Cache.Storage          as Storage
 import qualified Tuttifrutti.Cache.Storage.InMemory as Storage.InMemory
 
-newtype CacheIO k v = CacheIO { cacheIORef :: Storage.Handle k UTCTime v IO }
+-- | A cache handle.
+newtype Cache k v = Cache
+  { cacheStorage :: Storage.Handle k UTCTime v IO }
 
-newCacheIO
+-- | Create a new cache handle.
+new
   :: (Hashable k, Ord k, Store k)
   => Store v
   => MonadIO m
-  => Int -> m (CacheIO k v)
-newCacheIO capacity = CacheIO <$> liftIO (Storage.InMemory.newHandle capacity)
+  => Int -> m (Cache k v)
+new capacity =
+  Cache <$> liftIO (Storage.InMemory.newHandle capacity)
 
-insertIO :: MonadIO m => CacheIO k v -> k -> UTCTime -> v -> m ()
-insertIO (CacheIO storage) k p v = liftIO $ Storage.insert storage (k, p, v)
+-- | Insert a value in a given cache.
+insert
+  :: MonadIO m
+  => Cache k v -> k -> UTCTime -> v -> m ()
+insert Cache{..} k p v =
+  liftIO $ Storage.insert cacheStorage (k, p, v)
 
-lookupValidIO
+-- | Lookup a value and validate it with provided function.
+--   If the function returns 'Nothing' the value is considered
+--   expired and gets removed from the cache.
+lookupValid
   :: (Store a)
   => MonadIO m
-  => CacheIO k v
+  => Cache k v
   -> k
   -> (UTCTime -> v -> Maybe a)
   -> m (Maybe a)
-lookupValidIO (CacheIO storage) key validate =
-  liftIO $ Storage.lookupValid storage key validate
+lookupValid Cache{..} key validate =
+  liftIO $ Storage.lookupValid cacheStorage key validate
 
-lookupExpiringIO
+-- | Lookup a value that must be fresher than the given timestamp.
+--   As a side effect all the values that aren't that fresh are removed.
+lookupAfter
   :: (Store v)
   => MonadIO m
-  => CacheIO k v
+  => Cache k v
   -> k -- ^ key we are interested in
   -> UTCTime -- ^ everything prior is considered expired and removed
   -> m (Maybe v)
-lookupExpiringIO (CacheIO storage) k threshold = liftIO $ do
-  Storage.dropLowerThan storage threshold
-  Storage.lookupValid storage k $ \p v -> v <$ guard (p >= threshold)
+lookupAfter Cache{..} k threshold = liftIO $ do
+  Storage.dropLowerThan cacheStorage threshold
+  Storage.lookupValid cacheStorage k $ \p v ->
+    v <$ guard (p >= threshold)
