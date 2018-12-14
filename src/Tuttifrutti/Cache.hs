@@ -21,11 +21,12 @@ new capacity =
   Cache <$> liftIO (Storage.InMemory.newHandle capacity)
 
 -- | Insert a value in a given cache.
-insert
-  :: MonadIO m
-  => Cache k v -> k -> UTCTime -> v -> m ()
+insert :: MonadIO m => Cache k v -> k -> UTCTime -> v -> m ()
 insert Cache{..} k p v =
   liftIO $ Storage.insert cacheStorage (k, p, v)
+
+lookup :: (Store v, MonadIO m) => Cache k v -> k -> m (Maybe v)
+lookup cache k = lookupValid cache k (const Just)
 
 -- | Lookup a value and validate it with provided function.
 --   If the function returns 'Nothing' the value is considered
