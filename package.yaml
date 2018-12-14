@@ -119,3 +119,16 @@ default-extensions:
 - TypeSynonymInstances
 - ViewPatterns
 
+tests:
+  spec:
+    main: Main.hs
+    source-dirs:
+      - test
+      - src
+    dependencies:
+      - tuttifrutti
+      - hspec
+      - HUnit
+      - hspec-expectations-lifted
+      - tasty
+      - tasty-hunit
