@@ -13,6 +13,7 @@ allow-newer: true
 extra-deps:
 - rapid-0.1.4
 - template-0.2.0.10
+- range-0.2.1.1
 nix:
   enable: false
   packages:
