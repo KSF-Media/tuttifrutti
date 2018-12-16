@@ -17,8 +17,9 @@ new
   => Store v
   => MonadIO m
   => Int -> m (Cache k v)
-new capacity =
-  Cache <$> liftIO (Storage.InMemory.newHandle capacity)
+new capacity = atomically $ do
+  Cache . Storage.transHandle atomically
+    <$> Storage.InMemory.newHandle capacity
 
 -- | Insert a value in a given cache.
 insert :: MonadIO m => Cache k v -> k -> UTCTime -> v -> m ()
