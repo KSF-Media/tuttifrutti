@@ -11,7 +11,6 @@ import           Data.Store                (Store)
 import qualified Data.Store                as Store
 import           Data.Range.Range          (Range)
 import qualified Data.Range.Range          as Range
-import           Data.Tuple
 import           Data.List (partition)
 
 import qualified Tuttifrutti.Cache.Storage as Storage
@@ -19,25 +18,24 @@ import qualified Tuttifrutti.Cache.Storage as Storage
 -- | Initialize a cache handle, takes amount of bytes to which the
 --   cache content will be limited. Suggested value: half of available memory.
 newHandle
-  :: forall m k p v
+  :: forall k p v
    . Hashable k
   => (Store k, Store v)
   => (Ord p, Ord k)
-  => MonadIO m
   => Int -- ^ maximum capacity (in bytes, assuming 64-bit machine)
-  -> m (Storage.Handle k p v m)
+  -> STM (Storage.Handle k p v STM)
 newHandle capacity = do
-  ref <- newIORef $ Storage
+  var <- newTVar $ Storage
     { storageQueue = HashPSQ.empty
     , storageSize = 0
     , storageCapacity = capacity
     }
   pure $ Storage.Handle
     { Storage.alter = \f k ->
-        atomicModifyIORef' ref (swap . alter f k)
+        stateTVar var (alter f k)
     , Storage.dropRange = \p ->
-        atomicModifyIORef' ref $ (,()) . dropRange p
-    } 
+        stateTVar var $ ((),) . dropRange p
+    }
 
 data Storage k p v = Storage
   { -- ^ Amount of memory (in bytes) occupied by the bytestrings in the storage.
@@ -162,3 +160,18 @@ occupiedSpace bs = overheadWords * bytesPerWord + contentBytes
 elementOccupiedSpace :: (ShortByteString, p, ByteString) -> Int
 elementOccupiedSpace (k, _p, v) =
   occupiedSpace (Left k) + occupiedSpace (Right v)
+
+
+-- | Like 'modifyTVar'' but the function is a simple state transition that can
+-- return a side value which is passed on as the result of the 'STM'.
+--
+-- Available @since 2.5.0
+--
+-- TODO: remove once stm-2.5.0 arrives to LTS
+stateTVar :: TVar s -> (s -> (a, s)) -> STM a
+stateTVar var f = do
+   s <- readTVar var
+   let (a, s') = f s -- since we destructure this, we are strict in f
+   writeTVar var s'
+   return a
+{-# INLINE stateTVar #-}
