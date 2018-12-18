@@ -6,9 +6,13 @@ import           Tuttifrutti.Prelude
 import qualified Data.Has                  as Has
 import qualified Tuttifrutti.Cache.Storage as Storage
 
+import qualified Tuttifrutti.Cache.Nursery          as Nursery
+
 -- | A cache handle.
-newtype Handle id k v = Handle
-  { handleStorage :: Storage.Handle k UTCTime v IO }
+data Handle id k v = Handle
+  { handleStorage :: Storage.Handle k UTCTime v IO
+  , handleNursery :: Nursery.Handle k UTCTime v
+  }
 
 type MonadCache env m id k v =
   ( MonadReader env m
@@ -22,7 +26,18 @@ newHandle
   => MonadIO m
   => Storage.Handle k UTCTime v IO
   -> m (Handle id k v)
-newHandle = pure . Handle
+newHandle handleStorage = do
+  handleNursery <- atomically Nursery.newHandle
+  pure Handle
+    { handleNursery
+    , handleStorage = Nursery.nursedIOStorage handleNursery handleStorage
+    }
+
+insertAsync
+  :: (MonadIO m, Hashable k, Ord k)
+  => Handle id k v -> k -> UTCTime -> Async (UTCTime, v) -> m ()
+insertAsync Handle{..} k now =
+  atomically . Nursery.insertAsync handleNursery k now
 
 -- | Insert a value in a given cache.
 insert :: forall id k v env m. MonadCache env m id k v => k -> UTCTime -> v -> m ()
