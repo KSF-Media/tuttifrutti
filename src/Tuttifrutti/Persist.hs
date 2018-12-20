@@ -17,6 +17,7 @@ import           Database.Persist
 import           Database.Persist.Postgresql         (Migration, Sql, SqlBackend,
                                                       createPostgresqlPool, parseMigration,
                                                       runMigrationSilent, runSqlConn, runSqlPool)
+import qualified Database.Persist.Postgresql         as Persist
 import           Database.Persist.Sql.Types.Internal (LogFunc, connLogFunc)
 import           Database.PostgreSQL.Simple          (SqlError (..))
 import qualified Database.PostgreSQL.Simple          as PG
@@ -43,11 +44,23 @@ getConnectInfo passwordEnvVar = liftIO $ Envy.runEnv $ do
   connectPassword <- Envy.env passwordEnvVar
   pure PG.ConnectInfo{..}
 
+createConnectionPool :: Log.Handle -> PG.ConnectInfo -> IO (Pool SqlBackend)
+createConnectionPool logHandle connectInfo = do
+  connection <- PG.connect connectInfo
+  idleTimeout <- hush <$> do Envy.runEnv $ Envy.env "POSTGRES_POOL_IDLE_TIMEOUT"
+  stripesAmount <- hush <$> do Envy.runEnv $ Envy.env "POSTGRES_POOL_STRIPES"
+  connectionAmount <- hush <$> do Envy.runEnv $ Envy.env "POSTGRES_POOL_CONNECTIONS"
+  Pool.createPool
+    (Persist.openSimpleConn (logFunc logHandle) connection)
+    Persist.close'
+    (fromMaybe 1 stripesAmount)
+    (maybe 600 fromInteger idleTimeout)
+    (fromMaybe 10 connectionAmount)
+
 -- | Create a Handle for the Postgres Pool
 postgresHandle :: Log.Handle -> PG.ConnectInfo -> Migration -> IO Handle
 postgresHandle logHandle connectInfo migration = do
-  dbHandle <- (`MonadLogger.runLoggingT` (logFunc logHandle)) $ do
-    Handle <$> createPostgresqlPool connectionString 10
+  dbHandle <- Handle <$> createConnectionPool logHandle connectInfo
   with (logHandle, dbHandle) $ do
     migrationInfo <- transact $ parseMigration migration
     case migrationInfo of
@@ -64,7 +77,6 @@ postgresHandle logHandle connectInfo migration = do
     void $ transact $ runMigrationSilent migration
   pure dbHandle
   where
-    connectionString = PG.postgreSQLConnectionString connectInfo
     cautiousMigrationJson =
       map $ \(unsafe, sql) -> object
         [ "unsafe" .= unsafe
