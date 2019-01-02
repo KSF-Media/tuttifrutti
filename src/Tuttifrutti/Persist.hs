@@ -45,12 +45,11 @@ getConnectInfo passwordEnvVar = liftIO $ Envy.runEnv $ do
 
 createConnectionPool :: Log.Handle -> PG.ConnectInfo -> IO (Pool SqlBackend)
 createConnectionPool logHandle connectInfo = do
-  connection <- PG.connect connectInfo
   idleTimeout <- hush <$> do Envy.runEnv $ Envy.env "POSTGRES_POOL_IDLE_TIMEOUT"
   stripesAmount <- hush <$> do Envy.runEnv $ Envy.env "POSTGRES_POOL_STRIPES"
   connectionAmount <- hush <$> do Envy.runEnv $ Envy.env "POSTGRES_POOL_CONNECTIONS"
   Pool.createPool
-    (Persist.openSimpleConn (logFunc logHandle) connection)
+    (Persist.openSimpleConn (logFunc logHandle) =<< PG.connect connectInfo)
     Persist.close'
     (fromMaybe 1 stripesAmount)
     (maybe 600 fromInteger idleTimeout)
