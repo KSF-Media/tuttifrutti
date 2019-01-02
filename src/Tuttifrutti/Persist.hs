@@ -23,7 +23,6 @@ import           Database.PostgreSQL.Simple          (SqlError (..))
 import qualified Database.PostgreSQL.Simple          as PG
 import qualified System.Envy                         as Envy
 import qualified System.Log.FastLogger               as FastLogger
-import qualified UnliftIO
 
 import qualified Tuttifrutti.Log                     as Log
 import qualified Tuttifrutti.Log.Handle              as Log
@@ -105,21 +104,16 @@ closeHandle = Pool.destroyAllResources . unHandle
 type QueryT m = ReaderT SqlBackend m
 
 -- | Run a query in a transaction.
-transact
-  :: (MonadPersist env m)
-  => QueryT m a -> m a
+transact :: (MonadPersist env m) => QueryT m a -> m a
 transact m = do
   pool <- asks (unHandle . Has.getter)
   logHandle <- asks Has.getter
-  UnliftIO.withRunInIO $ \runInIO ->
-    runSqlPool -- this needs MonadBaseControl
-      (mapReaderT runInIO $ do -- so we switch the base monad of 'm' to IO
-        -- we also update the logging function to use current log handle
-        setLogFunc logHandle m)
-      pool
+  runSqlPool
+    -- we update the logging function to use current log handle
+    (setLogFunc logHandle m)
+    pool
   where
     setLogFunc logHandle =
       local $ \conn -> conn
-        -- we also update the logging function using current log handle
         { connLogFunc = logFunc logHandle }
 
