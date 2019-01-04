@@ -15,6 +15,7 @@ import qualified Data.ByteString.Lazy        as LByteString
 import qualified Data.CaseInsensitive        as CaseInsensitive
 import qualified Data.Has                    as Has
 import qualified Data.Text.Encoding          as Text
+import qualified Data.Text.Encoding.Error    as Text.Error
 import qualified Data.Time.Clock             as Time
 import qualified Data.Vcr                    as Vcr
 import           Network.HTTP.Client         (BodyReader, responseClose, responseOpen)
@@ -63,7 +64,7 @@ newNetworkHandle settings = do
             pure (const bodyPrereader <$> res, bodyHead)
           Log.logTrace "response opened"
             [ "request" .= httpRequestJson req
-            , "response" .= httpResponseJson (const (Text.decodeUtf8 bodyHead) <$> res)
+            , "response" .= httpResponseJson (Text.decodeUtf8With Text.Error.ignore bodyHead <$ res)
             , "ttfb" .= respondedAt `Time.diffUTCTime` requestedAt
             ]
           pure res'
