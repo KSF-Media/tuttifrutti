@@ -6,6 +6,14 @@ import           Data.Range.Range    (Range (..))
 
 -- | Storage implementation. This defines primitive operations, from which
 --   all others are derived.
+--
+--   Parameters:
+--
+--   [@k@ – key] Each cache item is uniquily identified by the value of this type.
+--   [@p@ – priority] Each cache item has a priority that's used for ordering,
+--   validity checks and bulk actions (e.g. expiration).
+--   [@v@ – value] The type for the content of cache items.
+--   [@m@ – monad] The monad type in which the actions would be executed.
 data Handle k p v m = Handle
   { -- ^ Insert, update, or delete element under a given key.
     alter     :: forall a. (Maybe (p, v) -> (a, Maybe (p, v))) -> k -> m a
