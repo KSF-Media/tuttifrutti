@@ -15,7 +15,13 @@ import           Data.Range.Range    (Range (..))
 --   [@v@ – value] The type for the content of cache items.
 --   [@m@ – monad] The monad type in which the actions would be executed.
 data Handle k p v m = Handle
-  { -- ^ Insert, update, or delete element under a given key.
+  { -- ^ Alter a value under a specific key.
+    --
+    --   Takes a function that will be applied to the value (or 'Nothing')
+    --   and would return a new value (or 'Nothing') along with the
+    --   result that would be returned to the caller.
+    --
+    --   Allows to implement insert, update, delete and many other useful things (see below).
     alter     :: forall a. (Maybe (p, v) -> (a, Maybe (p, v))) -> k -> m a
     -- ^ Drops elements whose priority falls into a given range.
   , dropRange :: Range p -> m ()
