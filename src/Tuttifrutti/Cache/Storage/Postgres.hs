@@ -6,7 +6,6 @@ import           RIO.List                             (headMaybe)
 import qualified Tuttifrutti.Cache.Storage            as Storage
 import           Tuttifrutti.Prelude
 
-import qualified Data.Aeson                           as Json
 import           Data.Pool                            (Pool)
 import qualified Data.Pool                            as Pool
 import qualified Data.Range.Range                     as Range
@@ -15,22 +14,10 @@ import qualified Database.PostgreSQL.Simple           as PG
 import qualified Database.PostgreSQL.Simple.FromField as PG
 import qualified Database.PostgreSQL.Simple.ToField   as PG
 import qualified Database.PostgreSQL.Simple.Types     as PG
-import qualified Tuttifrutti.Persist                  as Persist
 
 newtype TableName = TableName PG.Identifier
   deriving
     ( Eq, Ord, Show, IsString)
-
-newPool
-  :: PG.ConnectInfo
-  -> IO (Pool PG.Connection)
-newPool connectInfo =
-  Pool.createPool
-    (PG.connect connectInfo)
-    PG.close
-    1 -- stripes
-    (10 * 60) -- seconds, to keep unused connections open
-    10 -- maximum number of connections
 
 data Schema k p v = Schema
   { schemaKey      :: (PG.Identifier, PG.Identifier) -- (name, type)
