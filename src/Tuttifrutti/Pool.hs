@@ -3,8 +3,8 @@ module Tuttifrutti.Pool
   , module Data.Pool
   ) where
 
-import           Data.Time           (NominalDiffTime)
 import           Tuttifrutti.Prelude
+import           Tuttifrutti.Time    (NominalDiffTime, nominalMinute)
 
 import           Data.Pool           hiding (createPool, withResource)
 import qualified Data.Pool           as Data.Pool
@@ -17,6 +17,13 @@ data Config = Config
     -- ^ maximum number of resources to keep open per stripe
   , configResourcesMax  :: Int
   } deriving (Show, Eq, Ord)
+
+defaultConfig :: Config
+defaultConfig = Config
+  { configStripesAmount = 1
+  , configUnusedTimeout = 10 * nominalMinute
+  , configResourcesMax  = 10
+  }
 
 -- | Same as 'Data.Pool.createPool' but takes nicer 'Config' type.
 createPool
