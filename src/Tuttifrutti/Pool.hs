@@ -27,17 +27,18 @@ defaultConfig = Config
 
 -- | Same as 'Data.Pool.createPool' but takes nicer 'Config' type.
 createPool
-  :: MonadIO m
-  => IO a         -- ^ action to create the resource
-  -> (a -> IO ()) -- ^ action to destroy the resource
+  :: (MonadUnliftIO m, MonadMask m)
+  => m a         -- ^ action to create the resource
+  -> (a -> m ()) -- ^ action to destroy the resource
   -> Config
   -> m (Pool a)
 createPool create destroy Config{..} =
-  liftIO $ Data.Pool.createPool
-    create destroy
-    configStripesAmount
-    configUnusedTimeout
-    configResourcesMax
+  withRunInIO $ \runInIO -> do
+    liftIO $ Data.Pool.createPool
+      (runInIO create) (runInIO . destroy)
+      configStripesAmount
+      configUnusedTimeout
+      configResourcesMax
 
 -- | Same as 'Data.Pool.withResource' but uses 'MonadUnliftIO'.
 withResource :: MonadUnliftIO m => Pool a -> (a -> m b) -> m b
