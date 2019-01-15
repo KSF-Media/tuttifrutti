@@ -7,6 +7,7 @@ module Tuttifrutti.Time
   , isToday
   , localFakeTime
   , localFrozenTime
+  , Time.NominalDiffTime
   , nominalDay
   , nominalHour
   , nominalMinute
@@ -16,8 +17,8 @@ module Tuttifrutti.Time
 import           Tuttifrutti.Prelude
 
 import qualified Data.Has                as Has
-import qualified RIO.Time                as Time
 import           Data.Time.Clock         (nominalDay)
+import qualified RIO.Time                as Time
 
 import           Tuttifrutti.Time.Handle
 
