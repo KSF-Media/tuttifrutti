@@ -8,13 +8,10 @@ module Tuttifrutti.Persist
 
 import           Tuttifrutti.Prelude
 
-import           Control.Monad.Catch                 (Handler (..))
 import qualified Control.Monad.Logger                as MonadLogger
 import           Control.Retry                       (RetryPolicy)
 import qualified Control.Retry                       as Retry
 import qualified Data.Has                            as Has
-import           Data.Pool                           (Pool)
-import qualified Data.Pool                           as Pool
 import           Data.Text.Encoding                  (decodeUtf8)
 import           Database.Persist
 import           Database.Persist.Postgresql         (Migration, Sql, SqlBackend,
@@ -27,9 +24,11 @@ import qualified Database.PostgreSQL.Simple          as PG
 import qualified System.Envy                         as Envy
 import qualified System.Log.FastLogger               as FastLogger
 
-import qualified GHC.IO.Exception                    as Exception
 import qualified Tuttifrutti.Log                     as Log
 import qualified Tuttifrutti.Log.Handle              as Log
+import           Tuttifrutti.Pool                    (Pool)
+import qualified Tuttifrutti.Pool                    as Pool
+import qualified Tuttifrutti.Postgres                as Postgres
 
 type MonadPersist env m =
   (MonadReader env m, Has Handle env, MonadUnliftIO m, MonadIO m, Log.MonadLog env m)
@@ -54,46 +53,18 @@ defaultRetryPolicy =
     -- with overall timeout of 1 minute
     & Retry.limitRetriesByCumulativeDelay (round @Double 60e6)
 
-createConnectionPool :: Log.Handle -> PG.ConnectInfo -> IO (Pool SqlBackend)
-createConnectionPool logHandle connectInfo = do
-  idleTimeout <- hush <$> do Envy.runEnv $ Envy.env "POSTGRES_POOL_IDLE_TIMEOUT"
-  stripesAmount <- hush <$> do Envy.runEnv $ Envy.env "POSTGRES_POOL_STRIPES"
-  connectionAmount <- hush <$> do Envy.runEnv $ Envy.env "POSTGRES_POOL_CONNECTIONS"
-  Pool.createPool connect disconnect
-    (fromMaybe 1 stripesAmount)
-    (maybe 600 fromInteger idleTimeout)
-    (fromMaybe 10 connectionAmount)
-  where
-    connect =
-      Retry.recovering defaultRetryPolicy handlers $ \Retry.RetryStatus{..} -> do
-        when (rsIterNumber > 0) $ do
-          with logHandle $ do
-            Log.logInfo "Retrying to connect to database (${iter_number})"
-              [ "iter_number" .= rsIterNumber
-              , "cumulative_delay" .= rsCumulativeDelay
-              , "previous_delay" .= rsPreviousDelay
-              ]
-        Persist.openSimpleConn (logFunc logHandle) =<< PG.connect connectInfo
-    handlers =
-      [ \_retryStatus -> Handler $ \Exception.IOError{..} -> do
-          with logHandle $ do
-            Log.logError "An error occurred in ${location} when connecting to postgres."
-              [ "type" .= show ioe_type
-              , "location" .= ioe_location
-              , "description" .= ioe_description
-              , "errno" .= fmap show ioe_errno
-              , "filename" .= ioe_filename
-              , "handle" .= fmap show ioe_handle
-              ]
-          -- retry only if the error was raised by libpq
-          pure $ ioe_location == "libpq"
-      ]
-    disconnect = Persist.close'
+connect :: Log.Handle -> PG.ConnectInfo -> RetryPolicy -> IO SqlBackend
+connect logHandle connectInfo retryPolicy = do
+  connection <- Postgres.connect logHandle connectInfo retryPolicy
+  Persist.openSimpleConn (logFunc logHandle) connection
+
+disconnect :: SqlBackend -> IO ()
+disconnect = Persist.close'
 
 -- | Create a Handle for the Postgres Pool
-postgresHandle :: Log.Handle -> PG.ConnectInfo -> Migration -> IO Handle
-postgresHandle logHandle connectInfo migration = do
-  dbHandle <- Handle <$> createConnectionPool logHandle connectInfo
+postgresHandle :: Log.Handle -> Pool SqlBackend -> Migration -> IO Handle
+postgresHandle logHandle connectionPool migration = do
+  let dbHandle = Handle connectionPool
   with (logHandle, dbHandle) $ do
     migrationInfo <- transact $ parseMigration migration
     case migrationInfo of
