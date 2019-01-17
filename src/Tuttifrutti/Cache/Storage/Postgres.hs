@@ -34,6 +34,12 @@ schemaQuery Schema{..} = foldMap (fromString . Text.unpack)
       ]
   , ")"
   ]
+defaultSchema :: Schema Text UTCTime Json.Value
+defaultSchema = Schema
+  { schemaKey      = ("key", "text")
+  , schemaPriority = ("timestamp", "timestamptz")
+  , schemaValue    = ("value", "json")
+  }
 
 newHandle
   :: forall k p v m
