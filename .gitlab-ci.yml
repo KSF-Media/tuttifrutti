@@ -1,5 +1,11 @@
 image: fpco/stack-build:lts-12.12
-
+services:
+  - postgres:latest
+variables:
+  POSTGRES_DB: test
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: ""
+  POSTGRES_INITDB_ARGS: "-E UTF8"
 stages:
   - build
 

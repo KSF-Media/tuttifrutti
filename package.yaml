@@ -28,6 +28,7 @@ dependencies:
 - errors
 - exceptions
 - lens
+- lens-aeson
 - conduit
 - conduit-combinators # remove once we quit old conduit
 - insert-ordered-containers
@@ -45,6 +46,7 @@ dependencies:
 # Serialization formats
 - aeson
 - aeson-pretty
+- yaml
 # Servant things
 - servant
 - servant-server
@@ -132,3 +134,4 @@ tests:
       - hspec-expectations-lifted
       - tasty
       - tasty-hunit
+      - doctest
