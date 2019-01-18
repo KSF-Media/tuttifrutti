@@ -9,17 +9,16 @@ import qualified Tuttifrutti.Log.Handle as Log
 
 -- | A first-class DevelMain module. These fields can be binded to the top level of app's DevelMain module.
 data Handle env = Handle
-  { -- ^ Create env that persists across reloads and start
+  { -- | Create env that persists across reloads and start
     --   a webserver thread that uses it.
-    --
     --   Running update repeatedly would reload the code in
     --   the webserver thread, but won't recreate the 'Env'.
     update     :: IO ()
-    -- ^ Destroy the 'Env' and kill the webserver thread.
+    -- | Destroy the 'Env' and kill the webserver thread.
     --
     --   Use this function when you want to do full restart.
   , kill       :: IO ()
-    -- ^ provide given action with the env value
+    -- | Provide given action with the env value
   , withDevEnv :: forall a. (env -> IO a) -> IO a
   }
 
