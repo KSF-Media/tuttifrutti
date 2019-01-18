@@ -61,7 +61,7 @@ connect logHandle connectInfo retryPolicy = do
 disconnect :: SqlBackend -> IO ()
 disconnect = Persist.close'
 
--- | Create a Handle for the Postgres Pool
+-- | Create a Handle for the Postgres Pool.
 postgresHandle :: Log.Handle -> Pool SqlBackend -> Migration -> IO Handle
 postgresHandle logHandle connectionPool migration = do
   let dbHandle = Handle connectionPool

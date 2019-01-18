@@ -10,11 +10,11 @@ import           Data.Pool           hiding (createPool, withResource)
 import qualified Data.Pool           as Data.Pool
 
 data Config = Config
-  { -- ^ amount of stripes (distinct sub-pools) to maintain
+  { -- | amount of stripes (distinct sub-pools) to maintain
     configStripesAmount :: Int
-    -- ^ amount of time for which an unused resource is kept open
+    -- | amount of time for which an unused resource is kept open
   , configUnusedTimeout :: NominalDiffTime
-    -- ^ maximum number of resources to keep open per stripe
+    -- | maximum number of resources to keep open per stripe
   , configResourcesMax  :: Int
   } deriving (Show, Eq, Ord)
 

@@ -38,14 +38,14 @@ newHandle capacity = do
     }
 
 data Storage k p v = Storage
-  { -- ^ Amount of memory (in bytes) occupied by the bytestrings in the storage.
+  { -- | Amount of memory (in bytes) occupied by the bytestrings in the storage.
     --   This is only concerned with the actual bytestrings (keys and values).
     --   It doesn't account for the space occupied by the queue structure itself.
     --   For details on how this gets calculated see 'occupiedSpace'.
     storageSize     :: {-# UNPACK #-} !Int
-    -- ^ 'storageSize' should not exceed this limit    
+    -- | 'storageSize' should not exceed this limit    
   , storageCapacity :: {-# UNPACK #-} !Int
-    -- ^ The cache queue itself. The 'HashPSQ' is an efficient implementation of a priority queue.
+    -- | The cache queue itself. The 'HashPSQ' is an efficient implementation of a priority queue.
     --   UTCTime is used as a 'priority' which allows us efficiently drop the least recently used items
     --   (see 'trim') and ignore the expired items (see 'lookup').
     --

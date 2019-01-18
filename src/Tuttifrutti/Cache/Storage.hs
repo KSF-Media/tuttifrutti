@@ -15,7 +15,7 @@ import           Data.Range.Range    (Range (..))
 --   [@v@ – value] The type for the content of cache items.
 --   [@m@ – monad] The monad type in which the actions would be executed.
 data Handle k p v m = Handle
-  { -- ^ Alter a value under a specific key.
+  { -- | Alter a value under a specific key.
     --
     --   Takes a function that will be applied to the value (or 'Nothing')
     --   and would return a new value (or 'Nothing') along with the
@@ -23,7 +23,7 @@ data Handle k p v m = Handle
     --
     --   Allows to implement insert, update, delete and many other useful things (see below).
     alter     :: forall a. (Maybe (p, v) -> (a, Maybe (p, v))) -> k -> m a
-    -- ^ Drops elements whose priority falls into a given range.
+    -- | Drops elements whose priority falls into a given range.
   , dropRange :: Range p -> m ()
   }
 
@@ -41,6 +41,10 @@ insert h (k, p, v) = alter h (const ((), Just (p, v))) k
 -- | Delete a value under given key , returns the deleted value and its priority.
 delete :: Functor m => Handle k p v m -> k -> m (Maybe (p, v))
 delete h = alter h (,Nothing)
+
+-- | Lookup a value under a key with no validations.
+lookup :: Handle k p v m -> k -> m (Maybe v)
+lookup h k = lookupValid h k (const Just)
 
 -- | Lookup a value under a key. Takes a function that checks whether
 --   the element is expired. If that function returns 'Nothing' the item
