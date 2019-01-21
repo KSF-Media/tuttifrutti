@@ -15,7 +15,7 @@ extra-deps:
 - template-0.2.0.10
 - range-0.2.1.1
 nix:
-  enable: true
+  enable: false
   packages:
   - postgresql
   - zlib
