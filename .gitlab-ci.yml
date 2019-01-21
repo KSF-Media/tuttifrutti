@@ -16,4 +16,4 @@ build:
     paths:
       - .stack-work/
   script:
-    - stack build --fast
+    - stack test --fast
