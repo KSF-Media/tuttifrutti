@@ -1,8 +1,12 @@
-module Tuttifrutti.Postgres where
+module Tuttifrutti.Postgres
+  ( module Tuttifrutti.Postgres
+  , module Database.PostgreSQL.Simple
+  ) where
 
 import           Control.Monad.Catch        (Handler (..))
 import           Control.Retry              (RetryPolicy)
 import qualified Control.Retry              as Retry
+import           Database.PostgreSQL.Simple (ConnectInfo, Connection)
 import qualified Database.PostgreSQL.Simple as PG
 import qualified GHC.IO.Exception           as Exception
 
@@ -17,7 +21,7 @@ defaultRetryPolicy =
     -- with overall timeout of 1 minute
     & Retry.limitRetriesByCumulativeDelay (round @Double 60e6)
 
-connect :: Log.Handle -> PG.ConnectInfo -> Retry.RetryPolicy -> IO PG.Connection
+connect :: Log.Handle -> ConnectInfo -> Retry.RetryPolicy -> IO Connection
 connect logHandle connectInfo retryPolicy =
   Retry.recovering retryPolicy errorHandlers $ \Retry.RetryStatus{..} -> do
     when (rsIterNumber > 0) $ do
