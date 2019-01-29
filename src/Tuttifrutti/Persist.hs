@@ -35,17 +35,6 @@ type MonadPersist env m =
 
 newtype Handle = Handle { handlePool :: Pool SqlBackend }
 
--- | Read from environment vars all the parameters to make a ConnectInfo.
---   The variable name to pass the password in needs to be provided.
-getConnectInfo :: String -> IO (Either String PG.ConnectInfo)
-getConnectInfo passwordEnvVar = liftIO $ Envy.runEnv $ do
-  connectHost     <- Envy.env "POSTGRES_HOST"    <|> pure "localhost"
-  connectPort     <- Envy.env "POSTGRES_PORT"    <|> pure 5432
-  connectUser     <- Envy.env "POSTGRES_USER"    <|> pure "postgres"
-  connectDatabase <- Envy.env "POSTGRES_DB_NAME" <|> pure ""
-  connectPassword <- Envy.env passwordEnvVar
-  pure PG.ConnectInfo{..}
-
 defaultRetryPolicy :: RetryPolicy
 defaultRetryPolicy =
   -- exponential backoff starting at 0.1 second
