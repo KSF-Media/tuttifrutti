@@ -6,7 +6,7 @@ module Tuttifrutti.Postgres
 import           Control.Monad.Catch        (Handler (..))
 import           Control.Retry              (RetryPolicy)
 import qualified Control.Retry              as Retry
-import           Database.PostgreSQL.Simple (ConnectInfo, Connection)
+import           Database.PostgreSQL.Simple (ConnectInfo (..), Connection)
 import qualified Database.PostgreSQL.Simple as PG
 import qualified GHC.IO.Exception           as Exception
 
@@ -48,3 +48,5 @@ connect logHandle connectInfo retryPolicy =
           pure $ ioe_location == "libpq"
       ]
 
+disconnect :: Connection -> IO ()
+disconnect = PG.close
