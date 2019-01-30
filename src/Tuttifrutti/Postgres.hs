@@ -12,6 +12,8 @@ import qualified GHC.IO.Exception           as Exception
 
 import qualified Tuttifrutti.Log            as Log
 import qualified Tuttifrutti.Log.Handle     as Log
+import           Tuttifrutti.Pool           (Pool)
+import qualified Tuttifrutti.Pool           as Pool
 import           Tuttifrutti.Prelude
 
 defaultRetryPolicy :: RetryPolicy
@@ -20,6 +22,18 @@ defaultRetryPolicy =
   Retry.exponentialBackoff (round @Double 0.1e6)
     -- with overall timeout of 1 minute
     & Retry.limitRetriesByCumulativeDelay (round @Double 60e6)
+
+newConnectionPool
+  :: Log.Handle
+  -> RetryPolicy
+  -> Pool.Config
+  -> ConnectInfo
+  -> IO (Pool Connection)
+newConnectionPool logHandle retryPolicy poolConfig connectInfo =
+  Pool.createPool
+    (connect logHandle connectInfo retryPolicy)
+    disconnect
+    poolConfig
 
 connect :: Log.Handle -> ConnectInfo -> Retry.RetryPolicy -> IO Connection
 connect logHandle connectInfo retryPolicy =

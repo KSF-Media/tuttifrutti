@@ -21,7 +21,6 @@ import qualified Database.Persist.Postgresql         as Persist
 import           Database.Persist.Sql.Types.Internal (LogFunc, connLogFunc)
 import           Database.PostgreSQL.Simple          (SqlError (..))
 import qualified Database.PostgreSQL.Simple          as PG
-import qualified System.Envy                         as Envy
 import qualified System.Log.FastLogger               as FastLogger
 
 import qualified Tuttifrutti.Log                     as Log
@@ -41,6 +40,18 @@ defaultRetryPolicy =
   Retry.exponentialBackoff (round @Double 0.1e6)
     -- with overall timeout of 1 minute
     & Retry.limitRetriesByCumulativeDelay (round @Double 60e6)
+
+newSqlBackendPool
+  :: Log.Handle
+  -> RetryPolicy
+  -> Pool.Config
+  -> Postgres.ConnectInfo
+  -> IO (Pool Persist.SqlBackend)
+newSqlBackendPool logHandle retryPolicy poolConfig connectInfo =
+  Pool.createPool
+    (connect logHandle connectInfo retryPolicy)
+    disconnect
+    poolConfig
 
 connect :: Log.Handle -> PG.ConnectInfo -> RetryPolicy -> IO SqlBackend
 connect logHandle connectInfo retryPolicy = do
