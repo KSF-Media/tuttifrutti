@@ -1,13 +1,19 @@
-module Tuttifrutti.Postgres where
+module Tuttifrutti.Postgres
+  ( module Tuttifrutti.Postgres
+  , module Database.PostgreSQL.Simple
+  ) where
 
 import           Control.Monad.Catch        (Handler (..))
 import           Control.Retry              (RetryPolicy)
 import qualified Control.Retry              as Retry
+import           Database.PostgreSQL.Simple (ConnectInfo (..), Connection)
 import qualified Database.PostgreSQL.Simple as PG
 import qualified GHC.IO.Exception           as Exception
 
 import qualified Tuttifrutti.Log            as Log
 import qualified Tuttifrutti.Log.Handle     as Log
+import           Tuttifrutti.Pool           (Pool)
+import qualified Tuttifrutti.Pool           as Pool
 import           Tuttifrutti.Prelude
 
 defaultRetryPolicy :: RetryPolicy
@@ -17,7 +23,19 @@ defaultRetryPolicy =
     -- with overall timeout of 1 minute
     & Retry.limitRetriesByCumulativeDelay (round @Double 60e6)
 
-connect :: Log.Handle -> PG.ConnectInfo -> Retry.RetryPolicy -> IO PG.Connection
+newConnectionPool
+  :: Log.Handle
+  -> RetryPolicy
+  -> Pool.Config
+  -> ConnectInfo
+  -> IO (Pool Connection)
+newConnectionPool logHandle retryPolicy poolConfig connectInfo =
+  Pool.createPool
+    (connect logHandle connectInfo retryPolicy)
+    disconnect
+    poolConfig
+
+connect :: Log.Handle -> ConnectInfo -> Retry.RetryPolicy -> IO Connection
 connect logHandle connectInfo retryPolicy =
   Retry.recovering retryPolicy errorHandlers $ \Retry.RetryStatus{..} -> do
     when (rsIterNumber > 0) $ do
@@ -44,3 +62,5 @@ connect logHandle connectInfo retryPolicy =
           pure $ ioe_location == "libpq"
       ]
 
+disconnect :: Connection -> IO ()
+disconnect = PG.close

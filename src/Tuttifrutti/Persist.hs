@@ -21,7 +21,6 @@ import qualified Database.Persist.Postgresql         as Persist
 import           Database.Persist.Sql.Types.Internal (LogFunc, connLogFunc)
 import           Database.PostgreSQL.Simple          (SqlError (..))
 import qualified Database.PostgreSQL.Simple          as PG
-import qualified System.Envy                         as Envy
 import qualified System.Log.FastLogger               as FastLogger
 
 import qualified Tuttifrutti.Log                     as Log
@@ -35,23 +34,24 @@ type MonadPersist env m =
 
 newtype Handle = Handle { handlePool :: Pool SqlBackend }
 
--- | Read from environment vars all the parameters to make a ConnectInfo.
---   The variable name to pass the password in needs to be provided.
-getConnectInfo :: String -> IO (Either String PG.ConnectInfo)
-getConnectInfo passwordEnvVar = liftIO $ Envy.runEnv $ do
-  connectHost     <- Envy.env "POSTGRES_HOST"    <|> pure "localhost"
-  connectPort     <- Envy.env "POSTGRES_PORT"    <|> pure 5432
-  connectUser     <- Envy.env "POSTGRES_USER"    <|> pure "postgres"
-  connectDatabase <- Envy.env "POSTGRES_DB_NAME" <|> pure ""
-  connectPassword <- Envy.env passwordEnvVar
-  pure PG.ConnectInfo{..}
-
 defaultRetryPolicy :: RetryPolicy
 defaultRetryPolicy =
   -- exponential backoff starting at 0.1 second
   Retry.exponentialBackoff (round @Double 0.1e6)
     -- with overall timeout of 1 minute
     & Retry.limitRetriesByCumulativeDelay (round @Double 60e6)
+
+newSqlBackendPool
+  :: Log.Handle
+  -> RetryPolicy
+  -> Pool.Config
+  -> Postgres.ConnectInfo
+  -> IO (Pool Persist.SqlBackend)
+newSqlBackendPool logHandle retryPolicy poolConfig connectInfo =
+  Pool.createPool
+    (connect logHandle connectInfo retryPolicy)
+    disconnect
+    poolConfig
 
 connect :: Log.Handle -> PG.ConnectInfo -> RetryPolicy -> IO SqlBackend
 connect logHandle connectInfo retryPolicy = do
