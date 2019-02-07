@@ -30,6 +30,11 @@ insert k p v = do
   Handle{..} :: Handle id k v <- asks Has.getter
   liftIO $ Storage.insert handleStorage (k, p, v)
 
+delete :: forall id k v env m. MonadCache env m id k v => k -> m ()
+delete k = do
+  Handle{..} :: Handle id k v <- asks Has.getter
+  void $ liftIO $ Storage.delete handleStorage k
+
 lookup :: forall id k v env m. (MonadCache env m id k v) => k -> m (Maybe v)
 lookup k = do
   lookupValid @id k (const Just)
