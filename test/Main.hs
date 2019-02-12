@@ -1,13 +1,14 @@
 module Main where
 
-import qualified Data.Text               as Text
+import qualified Data.Text                                as Text
 import           Tuttifrutti.Prelude
 
-import           Test.DocTest            (doctest)
-import           Test.Tasty              as Tasty
+import           Test.DocTest                             (doctest)
+import           Test.Tasty                               as Tasty
 
+import qualified Tuttifrutti.Cache.Storage.InMemory.Tests
 import qualified Tuttifrutti.Cache.Tests
-import qualified Tuttifrutti.Package     as Package
+import qualified Tuttifrutti.Package                      as Package
 
 main :: IO ()
 main = do
@@ -27,4 +28,6 @@ doctests = do
 
 tests :: Tasty.TestTree
 tests = Tasty.testGroup "Main"
-  [ Tuttifrutti.Cache.Tests.tests ]
+  [ Tuttifrutti.Cache.Tests.tests
+  , Tuttifrutti.Cache.Storage.InMemory.Tests.tests
+  ]
