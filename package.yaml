@@ -32,12 +32,16 @@ dependencies:
 - conduit
 - conduit-combinators # remove once we quit old conduit
 - insert-ordered-containers
+- unordered-containers
 - case-insensitive
 - uuid
 - psqueues
 - retry
 - range
 - store
+- extensible
+- constraints
+- named >= 0.2
 # Development
 - rapid
 # Logging
