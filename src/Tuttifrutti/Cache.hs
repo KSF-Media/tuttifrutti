@@ -1,57 +1,68 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 module Tuttifrutti.Cache where
 
 import           Tuttifrutti.Prelude
 
-import           Data.Store                         (Store)
-
-import qualified Tuttifrutti.Cache.Storage          as Storage
-import qualified Tuttifrutti.Cache.Storage.InMemory as Storage.InMemory
+import qualified Data.Has                  as Has
+import qualified Tuttifrutti.Cache.Storage as Storage
 
 -- | A cache handle.
-newtype Cache k v = Cache
-  { cacheStorage :: Storage.Handle k UTCTime v IO }
+newtype Handle id k v = Handle
+  { handleStorage :: Storage.Handle k UTCTime v IO }
+
+type MonadCache env m id k v =
+  ( MonadReader env m
+  , Has (Handle id k v) env
+  , MonadIO m
+  )
 
 -- | Create a new cache handle.
-new
-  :: (Hashable k, Ord k, Store k)
-  => Store v
+newHandle
+  :: (Hashable k, Ord k)
   => MonadIO m
-  => Int -> m (Cache k v)
-new capacity = atomically $ do
-  Cache . Storage.transHandle atomically
-    <$> Storage.InMemory.newHandle capacity
+  => Storage.Handle k UTCTime v IO
+  -> m (Handle id k v)
+newHandle = pure . Handle
 
 -- | Insert a value in a given cache.
-insert :: MonadIO m => Cache k v -> k -> UTCTime -> v -> m ()
-insert Cache{..} k p v =
-  liftIO $ Storage.insert cacheStorage (k, p, v)
+insert :: forall id k v env m. MonadCache env m id k v => k -> UTCTime -> v -> m ()
+insert k p v = do
+  Handle{..} :: Handle id k v <- asks Has.getter
+  liftIO $ Storage.insert handleStorage (k, p, v)
 
-lookup :: (Store v, MonadIO m) => Cache k v -> k -> m (Maybe v)
-lookup cache k = lookupValid cache k (const Just)
+delete :: forall id k v env m. MonadCache env m id k v => k -> m ()
+delete k = do
+  Handle{..} :: Handle id k v <- asks Has.getter
+  void $ liftIO $ Storage.delete handleStorage k
+
+lookup :: forall id k v env m. (MonadCache env m id k v) => k -> m (Maybe v)
+lookup k = do
+  lookupValid @id k (const Just)
 
 -- | Lookup a value and validate it with provided function.
 --   If the function returns 'Nothing' the value is considered
 --   expired and gets removed from the cache.
 lookupValid
-  :: (Store a)
-  => MonadIO m
-  => Cache k v
-  -> k
+  :: forall id k v a env m
+   . MonadCache env m id k v
+  => k
   -> (UTCTime -> v -> Maybe a)
   -> m (Maybe a)
-lookupValid Cache{..} key validate =
-  liftIO $ Storage.lookupValid cacheStorage key validate
+lookupValid key validate = do
+  Handle{..} :: Handle id k v <- asks Has.getter
+  liftIO $ Storage.lookupValid handleStorage key validate
 
 -- | Lookup a value that must be fresher than the given timestamp.
 --   As a side effect all the values that aren't that fresh are removed.
 lookupAfter
-  :: (Store v)
-  => MonadIO m
-  => Cache k v
-  -> k -- ^ key we are interested in
+  :: forall id k v env m
+   . MonadCache env m id k v
+  => k -- ^ key we are interested in
   -> UTCTime -- ^ everything prior is considered expired and removed
   -> m (Maybe v)
-lookupAfter Cache{..} k threshold = liftIO $ do
-  Storage.dropLowerThan cacheStorage threshold
-  Storage.lookupValid cacheStorage k $ \p v ->
-    v <$ guard (p >= threshold)
+lookupAfter k threshold = do
+  Handle{..} :: Handle id k v <- asks Has.getter
+  liftIO $ do
+    Storage.dropLowerThan handleStorage threshold
+    Storage.lookupValid handleStorage k $ \p v ->
+      v <$ guard (p >= threshold)

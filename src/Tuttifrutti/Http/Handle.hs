@@ -1,6 +1,7 @@
 module Tuttifrutti.Http.Handle
   ( Handle(..)
   , newNetworkHandle
+  , disabledHandle
   , RequestId(..), addXRequestId
   , useVcrRecorder
   , httpRequestJson
@@ -74,6 +75,15 @@ newNetworkHandle settings = do
           liftIO $ responseClose res
     }
 
+disabledHandle :: Handle
+disabledHandle = Handle
+  { openResponse_ = \logHandle req -> do
+      with logHandle $ Log.localDomain "http-client" $ do
+        Log.logError "Attempted request through disabled handle" [ "request" .= httpRequestJson req ]
+      throwString "Http handle is disabled"
+  , closeResponse_ = \_ _ -> do
+      pure ()
+  }
 
 -- | Make it so that every outgoing request contains the X-Request-ID header with a given value.
 --   Wouldn't overwrite existing X-Request-ID header.
