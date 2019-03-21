@@ -67,8 +67,10 @@ dependencies:
 # Environment variables
 - envy
 # Http
+- network-uri
 - wai
 - wai-extra
+- wai-cors
 - http-api-data
 - http-types
 - http-client
