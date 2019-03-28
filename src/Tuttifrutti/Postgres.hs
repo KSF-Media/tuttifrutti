@@ -6,6 +6,7 @@ module Tuttifrutti.Postgres
 import           Control.Monad.Catch        (Handler (..))
 import           Control.Retry              (RetryPolicy)
 import qualified Control.Retry              as Retry
+import qualified Data.Has                   as Has
 import           Database.PostgreSQL.Simple (ConnectInfo (..), Connection)
 import qualified Database.PostgreSQL.Simple as PG
 import qualified GHC.IO.Exception           as Exception
@@ -22,6 +23,34 @@ defaultRetryPolicy =
   Retry.exponentialBackoff (round @Double 0.1e6)
     -- with overall timeout of 1 minute
     & Retry.limitRetriesByCumulativeDelay (round @Double 60e6)
+
+type MonadPostgres env m =
+  ( MonadReader env m
+  , Has Handle env
+  , MonadIO m
+  )
+
+newtype Handle = Handle
+  { handlePool :: Pool Connection }
+
+newHandle
+  :: Log.Handle
+  -> RetryPolicy
+  -> Pool.Config
+  -> ConnectInfo
+  -> IO Handle
+newHandle logHandle retryPolicy poolConfig connectInfo = do
+  handlePool <- newConnectionPool logHandle retryPolicy poolConfig connectInfo
+  pure Handle{..}
+
+closeHandle :: Handle -> IO ()
+closeHandle Handle{..} =
+  Pool.destroyAllResources handlePool
+
+withConnection :: (MonadPostgres env m, MonadUnliftIO m) => (Connection -> m a) -> m a
+withConnection f = do
+  Handle{..} <- asks Has.getter
+  Pool.withResource handlePool f
 
 newConnectionPool
   :: Log.Handle
