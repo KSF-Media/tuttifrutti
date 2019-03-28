@@ -3,18 +3,23 @@ module Tuttifrutti.Postgres
   , module Database.PostgreSQL.Simple
   ) where
 
-import           Control.Monad.Catch        (Handler (..))
-import           Control.Retry              (RetryPolicy)
-import qualified Control.Retry              as Retry
-import qualified Data.Has                   as Has
-import           Database.PostgreSQL.Simple (ConnectInfo (..), Connection)
-import qualified Database.PostgreSQL.Simple as PG
-import qualified GHC.IO.Exception           as Exception
+import           Control.Monad.Catch                  (Handler (..))
+import           Control.Retry                        (RetryPolicy)
+import qualified Control.Retry                        as Retry
+import qualified Data.Aeson                           as Json
+import qualified Data.Has                             as Has
+import qualified Data.Text.Encoding                   as Text
+import           Database.PostgreSQL.Simple           (ConnectInfo (..), Connection)
+import qualified Database.PostgreSQL.Simple           as PG
+import qualified Database.PostgreSQL.Simple.FromField as PG
+import qualified Database.PostgreSQL.Simple.ToField   as PG
+import qualified Database.PostgreSQL.Simple.Types     as PG
+import qualified GHC.IO.Exception                     as Exception
 
-import qualified Tuttifrutti.Log            as Log
-import qualified Tuttifrutti.Log.Handle     as Log
-import           Tuttifrutti.Pool           (Pool)
-import qualified Tuttifrutti.Pool           as Pool
+import qualified Tuttifrutti.Log                      as Log
+import qualified Tuttifrutti.Log.Handle               as Log
+import           Tuttifrutti.Pool                     (Pool)
+import qualified Tuttifrutti.Pool                     as Pool
 import           Tuttifrutti.Prelude
 
 defaultRetryPolicy :: RetryPolicy
@@ -93,3 +98,89 @@ connect logHandle connectInfo retryPolicy =
 
 disconnect :: Connection -> IO ()
 disconnect = PG.close
+
+
+-- | Given the same kind of mapping as 'fromEnumField' outputs an
+--   'Action' that encodes enum value.
+toEnumField :: (a -> Text) -> a -> PG.Action
+toEnumField mappingFn = PG.toField . mappingFn
+
+-- | Parse an enum field given a postgresql type name (as appears in @pg_type@ table)
+--   And a mapping function that converts enum values to their textual DB representation.
+--
+--   Example postgresql type:
+--
+--   @
+--   CREATE TYPE election.language_ration AS ENUM
+--     ( 'FI', 'SV', 'FI_SV', 'SV_FI' );
+--   @
+--
+--   Which corresponds to Haskell Enum:
+--
+--   @
+--   data LanguageRation = FI | SV | FI_SV | SV_FI
+--     deriving (Eq, Ord, Enum, Bounded, Generic, Data)
+--   @
+--
+--   And can be parsed with:
+--
+--   @
+--   fromEnumField "language_ration"
+--     \case FI    -> "FI"
+--           SV    -> "SV"
+--           FI_SV -> "FI_SV"
+--           SV_FI -> "SV_FI"
+--   @
+fromEnumField
+  :: (Typeable a, Enum a, Bounded a)
+  => ByteString  -- ^ expected @pg_type@
+  -> (a -> Text) -- ^ enum mapping
+  -> PG.FieldParser a
+fromEnumField pg_type mappingFn field_ maybeValue = do
+  columnType <- PG.typename field_
+  if columnType /= pg_type
+    then PG.returnError PG.Incompatible field_ $ "expected a " <> show pg_type
+    else do
+      case maybeValue of
+        Nothing -> do
+          PG.returnError PG.UnexpectedNull field_ "null not expected, use 'optionalField'"
+        Just value ->
+          case lookup (Text.decodeUtf8 value) mappingTable of
+            Nothing -> do
+              PG.returnError PG.ConversionFailed field_
+                ("Unmatched value: " <> show value <> ". Expected: " <> show (fst <$> mappingTable))
+            Just a -> pure a
+  where
+    mappingTable =
+      [ (mappingFn a, a) | a <- [minBound..maxBound] ]
+
+
+-- | Like 'fromJSONField', but takes a `text` field and parses it
+--   as if it's a 'Json.String'
+--   Useful for newtypes, enums and such other typed strings.
+fromJSONTextField :: (FromJSON a, Typeable a) => PG.FieldParser a
+fromJSONTextField field_ maybeValue = do
+  content :: Text <- PG.fromField field_ maybeValue
+  case Json.fromJSON $ Json.String content of
+    Json.Success a ->
+      pure a
+    Json.Error err ->
+      PG.returnError PG.ConversionFailed field_
+        ("fromJSON: " <> err)
+
+-- | Like 'toJSONField', but tries to encode the json value into a
+--   suitable postgresql type.
+--
+--   Objects are left out as @json@
+--
+--   Useful for newtypes, enums and such.
+asJSONField :: ToJSON a => a -> PG.Action
+asJSONField a =
+  case toJSON a of
+    Json.String s  -> PG.toField s
+    Json.Null      -> PG.toField PG.Null
+    Json.Array arr -> PG.toField (asJSONField <$> arr)
+    Json.Bool b    -> PG.toField b
+    Json.Number n  -> PG.toField n
+    Json.Object o  -> PG.toField (Json.Object o)
+
