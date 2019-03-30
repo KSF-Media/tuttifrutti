@@ -35,17 +35,29 @@ type MonadPostgres env m =
   , MonadIO m
   )
 
+data Config = Config
+  { configRetryPolicy    :: RetryPolicy
+    -- ^ policy for retrying failed connection attempts
+  , configPoolConfig     :: Pool.Config
+    -- ^ configuration for the connection pool
+  , configConnectInfo    :: ConnectInfo
+    -- ^ connection configuration
+  , configConnectionInit :: Connection -> IO ()
+    -- ^ A function that will be run for each newly opened 'Connection'.
+    --   In postgresql TCP connection corresponts to a "session", thus
+    --   this callback can be handidly used to e.g. @SET@ting some sesion
+    --   configuration parameters.
+  }
+
 newtype Handle = Handle
   { handlePool :: Pool Connection }
 
 newHandle
   :: Log.Handle
-  -> RetryPolicy
-  -> Pool.Config
-  -> ConnectInfo
+  -> Config
   -> IO Handle
-newHandle logHandle retryPolicy poolConfig connectInfo = do
-  handlePool <- newConnectionPool logHandle retryPolicy poolConfig connectInfo
+newHandle logHandle config = do
+  handlePool <- newConnectionPool logHandle config
   pure Handle{..}
 
 closeHandle :: Handle -> IO ()
@@ -59,19 +71,17 @@ withConnection f = do
 
 newConnectionPool
   :: Log.Handle
-  -> RetryPolicy
-  -> Pool.Config
-  -> ConnectInfo
+  -> Config
   -> IO (Pool Connection)
-newConnectionPool logHandle retryPolicy poolConfig connectInfo =
+newConnectionPool logHandle config@Config{..} =
   Pool.createPool
-    (connect logHandle connectInfo retryPolicy)
+    (connect logHandle config)
     disconnect
-    poolConfig
+    configPoolConfig
 
-connect :: Log.Handle -> ConnectInfo -> Retry.RetryPolicy -> IO Connection
-connect logHandle connectInfo retryPolicy =
-  Retry.recovering retryPolicy errorHandlers $ \Retry.RetryStatus{..} -> do
+connect :: Log.Handle -> Config -> IO Connection
+connect logHandle Config{..} =
+  Retry.recovering configRetryPolicy errorHandlers $ \Retry.RetryStatus{..} -> do
     when (rsIterNumber > 0) $ do
       with logHandle $ do
         Log.logInfo "Retrying to connect to database (${iter_number})"
@@ -79,7 +89,8 @@ connect logHandle connectInfo retryPolicy =
           , "cumulative_delay" .= rsCumulativeDelay
           , "previous_delay" .= rsPreviousDelay
           ]
-    PG.connect connectInfo
+    conn <- PG.connect configConnectInfo
+    conn <$ configConnectionInit conn
   where
     errorHandlers =
       [ \_retryStatus -> Handler $ \Exception.IOError{..} -> do

@@ -34,28 +34,19 @@ type MonadPersist env m =
 
 newtype Handle = Handle { handlePool :: Pool SqlBackend }
 
-defaultRetryPolicy :: RetryPolicy
-defaultRetryPolicy =
-  -- exponential backoff starting at 0.1 second
-  Retry.exponentialBackoff (round @Double 0.1e6)
-    -- with overall timeout of 1 minute
-    & Retry.limitRetriesByCumulativeDelay (round @Double 60e6)
-
 newSqlBackendPool
   :: Log.Handle
-  -> RetryPolicy
-  -> Pool.Config
-  -> Postgres.ConnectInfo
+  -> Postgres.Config
   -> IO (Pool Persist.SqlBackend)
-newSqlBackendPool logHandle retryPolicy poolConfig connectInfo =
+newSqlBackendPool logHandle config@Postgres.Config{..} =
   Pool.createPool
-    (connect logHandle connectInfo retryPolicy)
+    (connect logHandle config)
     disconnect
-    poolConfig
+    configPoolConfig
 
-connect :: Log.Handle -> PG.ConnectInfo -> RetryPolicy -> IO SqlBackend
-connect logHandle connectInfo retryPolicy = do
-  connection <- Postgres.connect logHandle connectInfo retryPolicy
+connect :: Log.Handle -> Postgres.Config -> IO SqlBackend
+connect logHandle config = do
+  connection <- Postgres.connect logHandle config
   Persist.openSimpleConn (logFunc logHandle) connection
 
 disconnect :: SqlBackend -> IO ()
