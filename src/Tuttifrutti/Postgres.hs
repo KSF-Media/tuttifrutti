@@ -26,8 +26,8 @@ defaultRetryPolicy :: RetryPolicy
 defaultRetryPolicy =
   -- exponential backoff starting at 0.1 second
   Retry.exponentialBackoff (round @Double 0.1e6)
-    -- with overall timeout of 1 minute
-    & Retry.limitRetriesByCumulativeDelay (round @Double 60e6)
+    -- with overall timeout of 10 minutes
+    & Retry.limitRetriesByCumulativeDelay (round @Double 60e7)
 
 type MonadPostgres env m =
   ( MonadReader env m
