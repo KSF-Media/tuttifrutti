@@ -111,6 +111,7 @@ instance KnownSymbol tag => Json.ToJSON (ErrorResponse tag) where
 type family HttpStatusCode (httpCode :: Nat) where
   HttpStatusCode 400 = "Bad request"
   HttpStatusCode 403 = "Forbidden"
+  HttpStatusCode 404 = "Not found"
   HttpStatusCode 405 = "Unsupported method"
   HttpStatusCode 415 = "Unsupported media type"
   HttpStatusCode 500 = "Internal server error"
