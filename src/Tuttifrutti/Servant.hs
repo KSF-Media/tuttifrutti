@@ -63,7 +63,7 @@ instance Servant.MimeUnrender Servant.JSON a => Servant.MimeUnrender JSON a wher
   mimeUnrender _ = Servant.mimeUnrender (Proxy :: Proxy Servant.JSON)
 
 data InvalidRequest
-    -- ^ Error returned by aeson when we tried to parse json body
+    -- | Error returned by aeson when we tried to parse json body
   = InvalidJson String
   deriving (Show, Eq, Ord, Generic, Typeable)
 
