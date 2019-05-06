@@ -41,8 +41,8 @@ import           Data.Extensible                            (emptyRecord, (<:), 
 import           Servant                                    as Servant hiding (JSON)
 import qualified Servant
 import           Servant.API.ContentTypes                   (canHandleCTypeH)
-import           Servant.Server.Internal.RoutingApplication (addBodyCheck, delayedFailFatal,
-                                                             withRequest)
+import           Servant.Server.Internal.Delayed            (addBodyCheck)
+import           Servant.Server.Internal.DelayedIO          (delayedFailFatal, withRequest)
 
 import qualified Tuttifrutti.Error as Error
 

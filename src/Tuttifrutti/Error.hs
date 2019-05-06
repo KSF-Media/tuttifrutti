@@ -179,8 +179,8 @@ declareErrorResponse _ swagger =
         schema = Swagger.Inline <$> responseSchema a <> responseSchema b
 
 
-servantErrResponse :: forall tag. KnownSymbol tag => ErrorResponse tag -> ServantErr
-servantErrResponse err@ErrorResponse{..} = ServantErr
+servantErrResponse :: forall tag. KnownSymbol tag => ErrorResponse tag -> ServerError
+servantErrResponse err@ErrorResponse{..} = ServerError
   { errHTTPCode = errorResponseHttpCode
   , errReasonPhrase = symbolVal @tag Proxy
   , errBody = Json.encode err
