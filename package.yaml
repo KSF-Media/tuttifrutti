@@ -42,6 +42,7 @@ dependencies:
 - extensible
 - constraints
 - named >= 0.2
+- attoparsec
 # Development
 - rapid
 # Logging

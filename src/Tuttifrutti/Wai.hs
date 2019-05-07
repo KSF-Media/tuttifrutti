@@ -59,9 +59,9 @@ withXRequestId requestId =
 
 -- | A rule against a given domain can be checked using 'allowDomain'.
 data AllowDomain
-  = -- ^ allows origin iff it has exactly the same domain
+  = -- | allows origin iff it has exactly the same domain
     AllowDomain Text
-    -- ^ allows origin iff its domain ends as specified
+    -- | allows origin iff its domain ends as specified
   | AllowDomainSuffix Text
   deriving (Show, Eq, Ord, Data, Generic)
 
