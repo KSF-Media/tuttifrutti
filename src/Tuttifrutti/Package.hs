@@ -4,7 +4,7 @@ module Tuttifrutti.Package where
 import           Prelude
 import           Tuttifrutti.Prelude
 
-import           Control.Lens        (mapped, (^..))
+import           Control.Lens        ((^..))
 
 import qualified Data.Aeson          as Json
 import qualified Data.Aeson.Lens     as Json

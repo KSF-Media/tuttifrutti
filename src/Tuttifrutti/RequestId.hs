@@ -3,16 +3,10 @@ module Tuttifrutti.RequestId where
 
 import           Tuttifrutti.Prelude
 
-import qualified Data.Aeson.Types          as Json
-import qualified Data.CaseInsensitive      as CI
 import           Data.Text.Encoding        (decodeUtf8, encodeUtf8)
 import qualified Data.UUID                 as UUID
 import qualified Data.UUID.V4              as UUID.V4
 import qualified Network.HTTP.Types.Header as Http
-import qualified Network.Wai               as Wai
-
-import qualified Tuttifrutti.Log           as Log
-import qualified Tuttifrutti.Log.Handle    as Log
 
 newtype RequestId = RequestId Text
   deriving (Show)
