@@ -1,3 +1,4 @@
+{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE BlockArguments #-}
 module Tuttifrutti.Http.Header where
 
@@ -19,6 +20,12 @@ import           Web.HttpApiData
 newtype CacheControl = CacheControl
   { cacheControlDirectives :: [(CI ByteString, Maybe ByteString)] }
   deriving (Show, Read, Eq, Ord, Generic, Typeable)
+
+pattern MaxAge :: CI ByteString
+pattern MaxAge = "max-age"
+
+pattern MaxAge0 :: (CI ByteString, Maybe ByteString)
+pattern MaxAge0 = ("max-age", Just "0")
 
 instance FromHttpApiData CacheControl where
   parseHeader = first Text.pack . Atto.parseOnly pCacheControl
