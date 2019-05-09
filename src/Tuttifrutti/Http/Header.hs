@@ -1,3 +1,4 @@
+{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE BlockArguments #-}
 module Tuttifrutti.Http.Header where
 
@@ -10,8 +11,9 @@ import qualified Data.CaseInsensitive as CI
 import qualified Data.Char as Char
 import qualified Data.Text as Text
 import qualified Data.Text.Encoding as Text
-import           Web.HttpApiData
+import           Data.Swagger   (ToParamSchema(..))
 import           Data.Bifunctor (first)
+import           Web.HttpApiData
 
 -- | @Cache-Control@ header contains a list of directives identified case-insentively
 --   and containing optional arguments
@@ -19,9 +21,18 @@ newtype CacheControl = CacheControl
   { cacheControlDirectives :: [(CI ByteString, Maybe ByteString)] }
   deriving (Show, Read, Eq, Ord, Generic, Typeable)
 
+pattern MaxAge :: CI ByteString
+pattern MaxAge = "max-age"
+
+pattern MaxAge0 :: (CI ByteString, Maybe ByteString)
+pattern MaxAge0 = ("max-age", Just "0")
+
 instance FromHttpApiData CacheControl where
   parseHeader = first Text.pack . Atto.parseOnly pCacheControl
   parseQueryParam = first Text.pack . Atto.parseOnly pCacheControl . Text.encodeUtf8
+
+instance ToParamSchema CacheControl where
+  toParamSchema _ = toParamSchema (Proxy :: Proxy Text)
 
 -- | Parser for 'Cache-Control' header. Follows the
 --   <https://tools.ietf.org/html/rfc7234#section-5.2 RFC7234>
