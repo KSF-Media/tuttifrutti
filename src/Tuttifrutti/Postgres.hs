@@ -95,7 +95,7 @@ connect logHandle Config{..} =
     errorHandlers =
       [ \_retryStatus -> Handler $ \Exception.IOError{..} -> do
           with logHandle $ do
-            Log.logError "An IOError occurred in ${location} when connecting to postgres."
+            Log.logInfo "An IOError occurred in ${location} when connecting to postgres."
               [ "type" .= show ioe_type
               , "location" .= ioe_location
               , "description" .= ioe_description
