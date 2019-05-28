@@ -34,10 +34,11 @@ newHandle handleStorage = do
     }
 
 insertAsync
-  :: (MonadIO m, Hashable k, Ord k)
-  => Handle id k v -> k -> UTCTime -> Async (UTCTime, v) -> m ()
-insertAsync Handle{..} k now =
-  atomically . Nursery.insertAsync handleNursery k now
+  :: forall id k v env m. (MonadCache env m id k v, Hashable k, Ord k)
+  => k -> UTCTime -> Async (UTCTime, v) -> m ()
+insertAsync k now asyncPV = do
+  Handle{..} :: Handle id k v <- asks Has.getter
+  atomically $ Nursery.insertAsync handleNursery k now asyncPV
 
 -- | Insert a value in a given cache.
 insert :: forall id k v env m. MonadCache env m id k v => k -> UTCTime -> v -> m ()
