@@ -1,3 +1,4 @@
+{-# LANGUAGE BlockArguments #-}
 module Tuttifrutti.Cache.Nursery where
 
 import           Tuttifrutti.Prelude
@@ -74,3 +75,7 @@ lookupAsync
   => Handle k p v -> k -> STM (Maybe (Async (p, v)))
 lookupAsync Handle{..} k =
   fmap snd . HashPSQ.lookup k <$> readTVar nurseryQueue
+
+waitHandle :: MonadIO m => Handle k p v -> m ()
+waitHandle Handle{..} =
+  mapM_ wait =<< atomically do readTVar nurseryQueue
