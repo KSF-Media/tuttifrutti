@@ -78,4 +78,4 @@ lookupAsync Handle{..} k =
 
 waitHandle :: MonadIO m => Handle k p v -> m ()
 waitHandle Handle{..} =
-  mapM_ wait =<< atomically do readTVar nurseryQueue
+  mapM_ waitCatch =<< atomically do readTVar nurseryQueue
