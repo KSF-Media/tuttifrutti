@@ -2,10 +2,7 @@ module Tuttifrutti.DevelMain where
 
 import           Tuttifrutti.Prelude
 
-import qualified Data.Has               as Has
 import qualified Rapid
-
-import qualified Tuttifrutti.Log.Handle as Log
 
 -- | A first-class DevelMain module. These fields can be binded to the top level of app's DevelMain module.
 data Handle env = Handle
@@ -28,12 +25,13 @@ runRioDev h m = withDevEnv h $ \env -> runRIO env m
 data Config env = Config
   { createEnv  :: IO env
   , destroyEnv :: env -> IO ()
+  , waitEnv    :: env -> IO ()
   , threads    :: [(String, env -> IO ())]
   }
 
 -- | Create a new 'DevelMain' handle.
 newHandle
-  :: forall env. (Typeable env, Has Log.Handle env)
+  :: forall env. (Typeable env)
   => Word32 -- ^ rapid id
   -> Config env
   -> Handle env
@@ -50,7 +48,7 @@ newHandle rapidId Config{..} = Handle{..}
         !env <- readIORef envRef
         for_ threads $ \(name, work) -> do
           Rapid.restart r name $ work env
-        Log.waitHandle $ Has.getter env
+        waitEnv env
 
     kill :: IO ()
     kill = do
@@ -68,7 +66,7 @@ newHandle rapidId Config{..} = Handle{..}
         envRef :: IORef env <- Rapid.createRef r ("env" :: String) $ do
          newIORef =<< createEnv
         env <- readIORef envRef
-        m env `finally` Log.waitHandle (Has.getter env)
+        m env `finally` waitEnv env
 
 closeHandle :: Handle env -> IO ()
 closeHandle = kill
