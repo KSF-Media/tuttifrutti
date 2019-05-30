@@ -55,6 +55,14 @@ lookup :: forall id k v env m. (MonadCache env m id k v) => k -> m (Maybe v)
 lookup k = do
   lookupValid @id k (const Just)
 
+lookupAsync
+  :: forall id k v env m
+   . (MonadCache env m id k v, Hashable k, Ord k)
+  => k -> m (Maybe (Async (UTCTime, v)))
+lookupAsync k = do
+  Handle{..} :: Handle id k v <- asks Has.getter
+  atomically $ Nursery.lookupAsync handleNursery k
+
 -- | Lookup a value and validate it with provided function.
 --   If the function returns 'Nothing' the value is considered
 --   expired and gets removed from the cache.
