@@ -33,6 +33,10 @@ newHandle handleStorage = do
     , handleStorage = Nursery.nursedIOStorage handleNursery handleStorage
     }
 
+waitHandle :: MonadIO m => Handle id k v -> m ()
+waitHandle Handle{..} =
+  Nursery.waitHandle handleNursery
+
 insertAsync
   :: forall id k v env m. (MonadCache env m id k v, Hashable k, Ord k)
   => k -> UTCTime -> Async (UTCTime, v) -> m ()
