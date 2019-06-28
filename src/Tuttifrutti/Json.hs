@@ -1,12 +1,16 @@
 {-# LANGUAGE OverloadedLists #-}
 module Tuttifrutti.Json
   ( toJsonRecord
+  , nullifyEmptyStrings
+  , nullifyEmptyArrays
+  , stripStrings
   ) where
 
 import           Tuttifrutti.Prelude
 
 import           Data.Aeson          (toJSON)
 import qualified Data.Aeson          as Json
+import qualified Data.Text           as Text
 import           Data.Constraint
 import           Data.Extensible
 import qualified Data.HashMap.Lazy   as HashMap
@@ -19,3 +23,24 @@ toJsonRecord =
         (\(Comp Dict) v -> Const $ Endo
           ((fromString $ symbolVal $ proxyAssocKey v, toJSON $ getField v):))
         (library :: Comp Dict (KeyValue KnownSymbol ToJSON) :* xs)
+
+-- | Go over the 'Json.Value' and turn all the @Json.String ""@ into 'Json.Null'.
+nullifyEmptyStrings :: Json.Value -> Json.Value
+nullifyEmptyStrings (Json.String "") = Json.Null
+nullifyEmptyStrings (Json.Array arr) = Json.Array (nullifyEmptyStrings <$> arr)
+nullifyEmptyStrings (Json.Object obj) = Json.Object (nullifyEmptyStrings <$> obj)
+nullifyEmptyStrings v = v
+
+-- | Go over the 'Json.Value' and apply `Text.strip` to every 'Json.String'.
+stripStrings :: Json.Value -> Json.Value
+stripStrings (Json.String s) = Json.String $ Text.strip s
+stripStrings (Json.Array arr) = Json.Array (stripStrings <$> arr)
+stripStrings (Json.Object obj) = Json.Object (stripStrings <$> obj)
+stripStrings v = v
+
+-- | Go over the 'Json.Value' and turn all the @Json.Array []@ into 'Json.Null'.
+nullifyEmptyArrays :: Json.Value -> Json.Value
+nullifyEmptyArrays (Json.Array []) = Json.Null
+nullifyEmptyArrays (Json.Array arr) = Json.Array (nullifyEmptyArrays <$> arr)
+nullifyEmptyArrays (Json.Object obj) = Json.Object (nullifyEmptyArrays <$> obj)
+nullifyEmptyArrays v = v
