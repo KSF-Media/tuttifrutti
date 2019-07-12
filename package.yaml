@@ -45,11 +45,22 @@ dependencies:
 - attoparsec
 # Development
 - rapid
+# Testing
+- hspec
+- hspec-expectations
+- hspec-expectations-lifted
+- tasty
+- tasty-golden
+- tasty-hspec
+- tasty-hunit
+- tasty-vcr
+- tasty-expected-failure
 # Logging
 - fast-logger
 - template
 # Serialization formats
 - aeson
+- aeson-diff
 - aeson-pretty
 - yaml
 # Servant things
