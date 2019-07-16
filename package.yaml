@@ -43,6 +43,8 @@ dependencies:
 - constraints
 - named >= 0.2
 - attoparsec
+- directory
+- temporary
 # Development
 - rapid
 # Testing
