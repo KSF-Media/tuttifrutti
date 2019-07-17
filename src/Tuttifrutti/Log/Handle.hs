@@ -2,7 +2,7 @@ module Tuttifrutti.Log.Handle
   ( LogEntry(..), LogSeverity(..)
   , Handle(..)
   , newHandle, waitHandle, closeHandle
-  , newStdoutHandle, newFileHandle
+  , newStdoutHandle, newFileHandle, newDirectoryHandle
   , googleMessage, devMessage
   ) where
 
@@ -14,6 +14,9 @@ import qualified Data.Aeson.Types         as Json
 import qualified Data.Text                as Text
 import qualified Data.Text.Lazy.Builder   as Text.Builder
 import qualified Data.Time                as Time
+import           System.Directory           (createDirectoryIfMissing)
+import qualified System.IO                  as IO
+import qualified System.IO.Temp             as Temp
 import qualified System.Log.FastLogger    as FastLogger
 
 -- some iso8601-related stuff, when we switch to time-1.9 this can be replaced
@@ -73,6 +76,21 @@ newFileHandle path handleComponent formatLogEntry = do
   newHandle formatLogEntry handleComponent
     <$> FastLogger.newFileLoggerSet FastLogger.defaultBufSize path
 
+-- | Writes to a file in a specified directory with a randomized name
+--
+--   >>> newDirectoryHandle "logs" "test.log" "myapp"
+--   Logs are written to logs/test123.log
+newDirectoryHandle
+  :: FilePath -- ^ directory in which to create a file
+  -> String   -- ^ template for the name (@foo.log@ -> @foo123.log@)
+  -> Text     -- ^ logging component name
+  -> IO Handle
+newDirectoryHandle dir template handleComponent = do
+  createDirectoryIfMissing True "logs"
+  logPath <- Temp.emptyTempFile dir template
+  logHandle <- newFileHandle logPath handleComponent devMessage
+  IO.putStrLn $ "Logs are written to " <> logPath
+  pure logHandle
 
 -- | Print json logs to Stackdriver.
 --   The structure we should use is quite undocumented,
