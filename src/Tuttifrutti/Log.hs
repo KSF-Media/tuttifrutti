@@ -7,6 +7,7 @@ module Tuttifrutti.Log
   , logInfo, logInfo_
   , logWarning, logWarning_
   , logError, logError_
+  , logThrowError, logThrowError_
   ) where
 
 
@@ -16,6 +17,7 @@ import qualified Data.Aeson             as Json
 import qualified Data.Aeson.Types       as Json
 import qualified Data.ByteString.Lazy   as LByteString
 import qualified Data.Has               as Has
+import qualified Data.Text              as Text
 import qualified Data.Text.Encoding     as Text
 import qualified Data.Text.Lazy         as LText
 import qualified Data.Text.Template     as Template
@@ -120,3 +122,13 @@ logError_   msg = logError   msg []
 logWarning_ msg = logWarning msg []
 logInfo_    msg = logInfo    msg []
 logTrace_   msg = logTrace   msg []
+
+-- | Like 'logError' but also does 'throwString' with the message.
+logThrowError :: (MonadLog env m) => Text -> [Json.Pair] -> m a
+logThrowError msg payload = do
+  logError msg payload
+  throwString $ Text.unpack $ interpolatedMessage msg $ Json.object payload
+
+-- | Like 'logError_' but also does 'throwString' with the message.
+logThrowError_ :: (MonadLog env m) => Text -> m a
+logThrowError_ msg = logThrowError msg []
