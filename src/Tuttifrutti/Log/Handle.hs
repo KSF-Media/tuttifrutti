@@ -86,6 +86,7 @@ newDirectoryHandle
   -> Text     -- ^ logging component name
   -> IO Handle
 newDirectoryHandle dir template handleComponent = do
+  createDirectoryIfMissing True "logs"
   logPath <- Temp.emptyTempFile dir template
   logHandle <- newFileHandle logPath handleComponent devMessage
   IO.putStrLn $ "Logs are written to " <> logPath
