@@ -11,10 +11,11 @@ import           Tuttifrutti.Prelude
 import qualified Data.Aeson                     as Json
 import           Data.Aeson.Diff                as Json
 import           Data.Aeson.Encode.Pretty       as Json
-import qualified Data.ByteString.Char8          as ByteString8
 import qualified Data.ByteString.Lazy           as LByteString
 import qualified Data.Has                       as Has
 import qualified Data.Vcr                       as Vcr
+import qualified Data.Text                      as Text
+import qualified Data.Text.Encoding             as Text
 
 import qualified Tuttifrutti.Http               as Http
 import qualified Tuttifrutti.Http.Handle        as Http
@@ -125,5 +126,5 @@ goldenTest name path action = Spec
       pure $ case Json.diff (toJSON a) (toJSON b) of
         Json.Patch [] -> Nothing
         changes       ->
-          Just $ ByteString8.unpack $ LByteString.toStrict $ Json.encodePretty changes
+          Just $ Text.unpack $ Text.decodeUtf8 $ LByteString.toStrict $ Json.encodePretty changes
     updateCorrectValue = LByteString.writeFile path . Json.encodePretty
