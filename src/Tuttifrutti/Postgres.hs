@@ -64,6 +64,12 @@ closeHandle :: Handle -> IO ()
 closeHandle Handle{..} =
   Pool.destroyAllResources handlePool
 
+-- | Configures connection so only the errors are printed out.
+--   Mostly helpful for avoiding "NOTICE: Table already exists"
+disableVerboseNotices :: Connection -> IO ()
+disableVerboseNotices conn =
+  void $ PG.execute conn "SET client_min_messages = error" ()
+
 withConnection :: (MonadPostgres env m, MonadUnliftIO m) => (Connection -> m a) -> m a
 withConnection f = do
   Handle{..} <- asks Has.getter
