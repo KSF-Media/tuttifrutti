@@ -16,6 +16,8 @@ module Tuttifrutti.Http
   , Handle
   , newNetworkHandle
   , bodyProducer
+  , bytestringResponse
+  , textResponse
   , jsonResponse
   , eitherJsonResponse
   , consumeJsonResponse
@@ -42,6 +44,7 @@ import           Network.HTTP.Types          as Http
 import qualified Data.ByteString.Lazy        as LByteString
 import qualified Data.Conduit.Attoparsec     as Conduit
 import qualified Data.Text.Encoding          as Text
+import qualified Data.Text.Lazy              as LText
 import qualified Data.Aeson                  as Json
 import qualified Data.Aeson.Types            as Json
 
@@ -72,6 +75,20 @@ bodyProducer
   -> ConduitT i ByteString m ()
 bodyProducer request = do
   withHttpResponseC request (bodyReaderSource . Http.responseBody)
+
+bytestringResponse
+  :: (MonadHttp env m, Log.MonadLog env m)
+  => Request -> m (Response ByteString)
+bytestringResponse req =
+  withHttpResponse req $ traverse $ \bodyReader -> LByteString.toStrict <$> do
+    runConduitRes $ bodyReaderSource bodyReader .| sinkLazy
+
+textResponse
+  :: (MonadHttp env m, Log.MonadLog env m)
+  => Request -> m (Response Text)
+textResponse req =
+  withHttpResponse req $ traverse $ \bodyReader -> LText.toStrict <$> do
+    runConduitRes $ bodyReaderSource bodyReader .| decodeUtf8LenientC .| sinkLazy
 
 -- | Perform an HTTP 'Request' and consume the body as JSON. See 'consumeJsonResponse' for details.
 --   Would throw 'JSONException' if the decoding/parsing fails.
