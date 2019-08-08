@@ -33,11 +33,8 @@ import           Tuttifrutti.Prelude
 
 import qualified Data.Has                    as Has
 import qualified Data.Vcr                    as Vcr
-import           Network.HTTP.Client         (BodyReader, responseClose, responseOpen, withResponse)
-import qualified Network.HTTP.Client         as Http
-import           Network.HTTP.Client.Conduit (HasHttpManager (..), Request, Response,
-                                              bodyReaderSource, defaultManagerSettings,
-                                              parseRequest, responseStatus)
+import           Network.HTTP.Client         (BodyReader)
+import           Network.HTTP.Client.Conduit
 import           Network.HTTP.Simple         (setRequestQueryString, JSONException(..), HttpException(..))
 import           Network.HTTP.Simple         as Http
 import           Network.HTTP.Types          as Http
@@ -74,7 +71,7 @@ bodyProducer
   => Request
   -> ConduitT i ByteString m ()
 bodyProducer request = do
-  withHttpResponseC request (bodyReaderSource . Http.responseBody)
+  withHttpResponseC request (bodyReaderSource . responseBody)
 
 bytestringResponse
   :: (MonadHttp env m, Log.MonadLog env m)
