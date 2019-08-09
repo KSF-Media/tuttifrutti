@@ -129,7 +129,7 @@ consumeJsonResponse request response = runConduitRes $ for response $ \bodyReade
       case Json.parseEither parseJSON json of
         Left err -> do
           Log.logError "Failed to parse JSON response: ${error}"
-            [ "error" .= show err
+            [ "error" .= err
             , "json"  .= json
             ]
           pure $ Left $ JSONConversionException request (json <$ response) err
