@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-orphans           #-}
 module Tuttifrutti.Prelude
   ( module X
   , module Tuttifrutti.Prelude
@@ -44,6 +45,7 @@ import           Data.Traversable           as X (for, forM)
 import           Data.Typeable              as X (TypeRep, Typeable, typeOf, typeRep)
 import           Data.UUID                  as X (UUID)
 import           Data.Void                  as X (Void, absurd)
+import           Database.Persist.Postgresql as X (PersistField, PersistFieldSql, sqlType, PersistValue(..), SqlType(..), fromPersistValue, toPersistValue)
 import           GHC.Exts                   as X (fromList)
 import           GHC.Generics               as X (Generic)
 import           GHC.OverloadedLabels       as X (IsLabel (fromLabel))
@@ -59,6 +61,8 @@ import           UnliftIO                   as X (MonadUnliftIO)
 import           UnliftIO.Exception         as X (Exception, bracket, catch, catchAny, finally,
                                                   handle, onException, throwIO, throwString, try)
 import           Web.HttpApiData            as X (FromHttpApiData, ToHttpApiData)
+
+import qualified Data.UUID                  as UUID
 
 
 with :: env -> ReaderT env m a -> m a
@@ -78,3 +82,17 @@ onLeft f = either f pure
 throwLeft :: (Exception e, MonadThrow m) => m (Either e b) -> m b
 throwLeft m = m >>= onLeft throwM
 
+
+-- Note: orphan instances copied straight from Persistent documentation
+-- Note: we're taking advantage of PostgreSQL understanding UUID values,
+-- thus "PersistDbSpecific"
+instance PersistField UUID where
+  toPersistValue = PersistDbSpecific . UUID.toASCIIBytes
+  fromPersistValue (PersistDbSpecific uuid) =
+    case UUID.fromASCIIBytes uuid of
+      Nothing -> Left $ "Tuttifrutti.DB: Failed to deserialize a UUID; received: " <> tshow uuid
+      Just uuid' -> Right uuid'
+  fromPersistValue x = Left $ "Tuttifrutti.DB: When trying to deserialize a UUID: expected PersistDbSpecific, received: " <> tshow x
+
+instance PersistFieldSql UUID where
+  sqlType _ = SqlOther "uuid"
