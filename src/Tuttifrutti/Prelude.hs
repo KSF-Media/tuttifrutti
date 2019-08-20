@@ -61,6 +61,8 @@ import           UnliftIO                   as X (MonadUnliftIO)
 import           UnliftIO.Exception         as X (Exception, bracket, catch, catchAny, finally,
                                                   handle, onException, throwIO, throwString, try)
 import           Web.HttpApiData            as X (FromHttpApiData, ToHttpApiData)
+import           Web.PathPieces             as X (PathPiece(..))
+
 
 import qualified Data.UUID                  as UUID
 
@@ -96,3 +98,7 @@ instance PersistField UUID where
 
 instance PersistFieldSql UUID where
   sqlType _ = SqlOther "uuid"
+
+instance PathPiece UUID where
+  fromPathPiece = UUID.fromText
+  toPathPiece = UUID.toText
