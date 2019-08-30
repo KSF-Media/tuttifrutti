@@ -10,6 +10,7 @@ import           Data.Text.Encoding          (decodeUtf8)
 import qualified Network.URI                 as URI
 import qualified Network.Wai                 as Wai
 import qualified Network.Wai.Middleware.Cors as Wai
+import qualified Network.Socket              as Socket
 
 import qualified Tuttifrutti.Http            as Http
 import qualified Tuttifrutti.Log             as Log
@@ -31,19 +32,37 @@ requestLogger env =
       with env
         $ Log.localDomain "http-server"
         $ Log.logInfo "Incoming HTTP request: $method $path"
-        $ requestJson req <> [ "request_id" .= requestId ]
+        $ requestToJSON req <> [ "request_id" .= requestId ]
       app requestId req res
+
+requestToJSON :: Wai.Request -> [Json.Pair]
+requestToJSON request =
+    [ "version" .= show (Wai.httpVersion request)
+    , "secure"  .= Wai.isSecure request
+    , "host"    .= sockAddrToJSON (Wai.remoteHost request)
+    , "method"  .= (decodeUtf8 $ Wai.requestMethod request)
+    , "path"    .= (decodeUtf8 $ Wai.rawPathInfo request)
+    , "query"   .= object (queryItemJson <$> Wai.queryString request)
+    , "headers" .= object (headerJson <$> Wai.requestHeaders request)
+    ]
   where
-    requestJson :: Wai.Request -> [Json.Pair]
-    requestJson req =
-        [ "method"  .= (decodeUtf8 $ Wai.requestMethod req)
-        , "path"    .= (decodeUtf8 $ Wai.rawPathInfo req)
-        , "query"   .= (queryItemJson <$> Wai.queryString req)
-        , "headers" .= object (headerJson <$> Wai.requestHeaders req)
-        ]
-      where
-        queryItemJson (name, mValue) = (decodeUtf8 name, decodeUtf8 <$> mValue)
-        headerJson (name, value) = decodeUtf8 (CI.original name) .= decodeUtf8 value
+    queryItemJson (name, mValue) = decodeUtf8 name .= fmap decodeUtf8 mValue
+    headerJson (name, value) = decodeUtf8 (CI.original name) .= decodeUtf8 value
+
+sockAddrToJSON :: Socket.SockAddr -> Json.Value
+sockAddrToJSON = object . \case
+  Socket.SockAddrInet port (Socket.hostAddressToTuple -> host) ->
+    [ "host" .= host
+    , "port" .= toInteger port
+    ]
+  Socket.SockAddrInet6 port flow (Socket.hostAddress6ToTuple -> host) scope ->
+    [ "host" .= host
+    , "port" .= toInteger port
+    , "flow" .= flow
+    , "scope" .= scope
+    ]
+  Socket.SockAddrUnix path -> [ "unix" .= toJSON path ]
+  Socket.SockAddrCan can -> [ "can" .= toJSON can ]
 
 -- | Include request id everywhere where it' needed (logging, outgoing calls, etc)
 withXRequestId

@@ -85,6 +85,7 @@ dependencies:
 # Environment variables
 - envy
 # Http
+- network
 - network-uri
 - wai
 - wai-extra
