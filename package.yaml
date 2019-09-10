@@ -48,6 +48,7 @@ dependencies:
 - attoparsec
 - directory
 - temporary
+- regex-pcre
 # Development
 - rapid
 # Testing
