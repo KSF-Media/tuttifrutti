@@ -5,6 +5,7 @@ import           Tuttifrutti.Prelude
 import qualified Data.Aeson          as JSON
 import qualified Data.Swagger        as Swagger
 import qualified Data.Text           as Text
+import           Data.Unjson
 import           Text.Regex.PCRE     (Regex, makeRegex, matchTest)
 
 newtype EmailAddress = EmailAddress { unEmailAddress :: Text }
@@ -26,6 +27,9 @@ instance FromJSON EmailAddress where
     if isEmailAddressValid $ EmailAddress email
     then pure $ EmailAddress email
     else fail $ show EmailAddressInvalid
+
+instance Unjson EmailAddress where
+  unjsonDef = unjsonAeson
 
 data EmailAddressErrors = EmailAddressInvalid
   deriving (Show)

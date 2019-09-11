@@ -19,6 +19,7 @@ extra-deps:
 - servant-client-0.16
 - servant-blaze-0.9
 - http-client-0.6.4
+- unjson-0.15.2.1@sha256:a6e66733e3cae782cb02487cafba350879fa754d7a803f0230d7c5267ebd6644,3327
 nix:
   enable: false
   packages:
