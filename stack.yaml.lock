@@ -129,6 +129,13 @@ packages:
       sha256: fe331314b0a8d9e8ce445405831b6e802ab99d57cab1f4d265910cfcd68d3153
   original:
     hackage: http-client-0.6.4
+- completed:
+    hackage: unjson-0.15.2.1@sha256:a6e66733e3cae782cb02487cafba350879fa754d7a803f0230d7c5267ebd6644,3327
+    pantry-tree:
+      size: 365
+      sha256: 7a09a4a02b6468ba825accb40712002da75269351f73d27e6eb077fc58284d5b
+  original:
+    hackage: unjson-0.15.2.1@sha256:a6e66733e3cae782cb02487cafba350879fa754d7a803f0230d7c5267ebd6644,3327
 snapshots:
 - completed:
     size: 498155
