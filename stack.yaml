@@ -1,4 +1,4 @@
-resolver: lts-13.19
+resolver: lts-14.7
 packages:
 - .
 extra-deps:
@@ -11,17 +11,13 @@ extra-deps:
 - rapid-0.1.4
 - template-0.2.0.10
 - range-0.2.1.1
-- named-0.2.0.0
 - extensible-0.5@sha256:8a3ca016244ad8780fc3c1b9d2ff99534718a4e3a40cd69d8145d0fee915ef09
-- servant-0.16
-- servant-client-core-0.16
-- servant-server-0.16
-- servant-client-0.16
-- servant-blaze-0.9
-- http-client-0.6.4
 - unjson-0.15.2.1@sha256:a6e66733e3cae782cb02487cafba350879fa754d7a803f0230d7c5267ebd6644,3327
+- these-lens-1@sha256:960f53c44201f5f67d0158162ce39cc7095b958d584d76a2aead358a54c137d3,1138
 nix:
   enable: false
   packages:
   - postgresql
   - zlib
+  - pcre
+  - lzma
