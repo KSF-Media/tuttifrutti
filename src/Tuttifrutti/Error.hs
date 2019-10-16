@@ -55,14 +55,14 @@ instance
     declareNamedSchema _ = do
       extraProperties <- declareExtraProperties
       let errSchema = mempty
-            & Swagger.type_ .~ Swagger.SwaggerObject
+            & Swagger.type_ ?~ Swagger.SwaggerObject
             & Swagger.properties .~ fromList
                 [ ("description", Swagger.Inline $ Swagger.constSchema description)
                 ] <> fromList extraProperties
       -- The schema is not named, we want it to be more-or-less anonymous so that we can
       -- "rebundle" them for different endpoints.
       pure $ Swagger.NamedSchema Nothing $ mempty
-        & Swagger.type_ .~ Swagger.SwaggerObject
+        & Swagger.type_ ?~ Swagger.SwaggerObject
         & Swagger.properties .~ fromList
             [ ("http_code", Swagger.Inline $ Swagger.constSchema httpCode)
             , ("http_status", Swagger.Inline $ Swagger.constSchema httpStatus )

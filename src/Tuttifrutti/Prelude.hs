@@ -6,7 +6,7 @@ module Tuttifrutti.Prelude
   where
 
 import           RIO                        as X hiding (Handle, Handler, first, logError, logInfo,
-                                                  logWarn, over, second, set, view, (<>), (^.), LogFunc)
+                                                  logWarn, over, second, set, view, (<>), (^.), LogFunc, Category)
 
 import           Control.Applicative        as X (Alternative, empty, (<|>))
 import           Control.Error              as X (hush)
@@ -40,7 +40,8 @@ import           Data.Monoid                as X (Any (..), Endo (..), Sum (..),
 import           Data.Proxy                 as X (Proxy (Proxy))
 import           Data.Semigroup             as X (Semigroup, sconcat)
 import           Data.String                as X (IsString (..))
-import           Data.These                 as X (These (..), _That, _These, _This)
+import           Data.These                 as X (These (..))
+import           Data.These.Lens            as X (_That, _These, _This)
 import           Data.Traversable           as X (for, forM)
 import           Data.Typeable              as X (TypeRep, Typeable, typeOf, typeRep)
 import           Data.UUID                  as X (UUID)

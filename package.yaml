@@ -24,6 +24,8 @@ dependencies:
 - rio
 - data-has
 - these
+- these-lens
+- semialign
 - contravariant
 - mtl
 - transformers

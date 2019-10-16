@@ -9,8 +9,6 @@ module Tuttifrutti.Persist
 import           Tuttifrutti.Prelude
 
 import qualified Control.Monad.Logger                as MonadLogger
-import           Control.Retry                       (RetryPolicy)
-import qualified Control.Retry                       as Retry
 import qualified Data.Has                            as Has
 import           Data.Text.Encoding                  (decodeUtf8)
 import           Database.Persist
@@ -20,7 +18,6 @@ import           Database.Persist.Postgresql         (Migration, Sql, SqlBackend
 import qualified Database.Persist.Postgresql         as Persist
 import           Database.Persist.Sql.Types.Internal (LogFunc, connLogFunc)
 import           Database.PostgreSQL.Simple          (SqlError (..))
-import qualified Database.PostgreSQL.Simple          as PG
 import qualified System.Log.FastLogger               as FastLogger
 
 import qualified Tuttifrutti.Log                     as Log
