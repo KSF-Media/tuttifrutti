@@ -4,6 +4,7 @@ import           Tuttifrutti.Prelude
 
 import qualified Data.Aeson.Types            as Json
 import qualified Data.ByteString.Char8       as ByteString8
+import qualified Data.ByteString.Lazy        as LByteString
 import qualified Data.CaseInsensitive        as CI
 import qualified Data.Text                   as Text
 import           Data.Text.Encoding          (decodeUtf8)
@@ -102,3 +103,28 @@ checkRequestOrigin allowDomains request = do
   let domain = Text.pack $ URI.uriRegName authority
   guard $ any (`allowDomain` domain) allowDomains
   pure origin
+
+-- | Body of 'Wai.Request' is fetched by repeatedly calling @requestBody :: Wai.Request -> IO ByteString@,
+--   which reads the next chunk from the socket. So consuming it is possible only once from a given @Wai.Request@.
+--
+--   This utility reads the body out and returns it as a single bytestring along with a copy of a request whose
+--   'Wai.requestBody' would also return that bytestring as a single chunk, which allows to access the body
+--   from several places to which the request is being passed.
+accessStrictRequestBody :: MonadIO m => Wai.Request -> m (LByteString, Wai.Request)
+accessStrictRequestBody request = do
+  body <- liftIO $ Wai.strictRequestBody request
+  (body,) <$> setRequestBody request body
+
+setRequestBody :: MonadIO m => Wai.Request -> LByteString -> m Wai.Request
+setRequestBody request body = do
+  bodyVar <- newMVar body
+  pure request
+    { Wai.requestBody = maybe mempty LByteString.toStrict <$> tryTakeMVar bodyVar }
+
+-- | Takes the request consumes the body, and returns two request copies
+--   from which that body can be read. The body of the original request
+--   can't be read after this.
+cloneRequest :: MonadIO m => Wai.Request -> m (Wai.Request, Wai.Request)
+cloneRequest request = do
+  body <- liftIO $ Wai.strictRequestBody request
+  (,) <$> setRequestBody request body <*> setRequestBody request body
