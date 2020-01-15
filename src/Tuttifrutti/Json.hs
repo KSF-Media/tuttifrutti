@@ -4,12 +4,15 @@ module Tuttifrutti.Json
   , nullifyEmptyStrings
   , nullifyEmptyArrays
   , stripStrings
+  , stripPrefix
   ) where
 
 import           Tuttifrutti.Prelude
 
 import           Data.Aeson          (toJSON)
 import qualified Data.Aeson          as Json
+import qualified Data.Char           as Char
+import qualified Data.List as List
 import qualified Data.Text           as Text
 import           Data.Constraint
 import           Data.Extensible
@@ -44,3 +47,14 @@ nullifyEmptyArrays (Json.Array []) = Json.Null
 nullifyEmptyArrays (Json.Array arr) = Json.Array (nullifyEmptyArrays <$> arr)
 nullifyEmptyArrays (Json.Object obj) = Json.Object (nullifyEmptyArrays <$> obj)
 nullifyEmptyArrays v = v
+
+stripPrefix :: String -> Json.Options
+stripPrefix prefix =
+  Json.defaultOptions
+    { Json.fieldLabelModifier
+        = uncapitalize . fromMaybe (error ("Did not find prefix " ++ prefix)) . List.stripPrefix prefix
+    }
+  where
+    uncapitalize :: String -> String
+    uncapitalize (head:rest) = Char.toLower head : rest
+    uncapitalize []          = []
