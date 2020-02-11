@@ -252,4 +252,4 @@ instance ErrorType 415 "unsupported_media_type"
 instance ErrorType 400 "invalid_request_body" where
   type ExtraFields "invalid_request_body" =
     '[ "message" >: Text ]
-  errorDescription _ = "Couldn't parse the request body."
+  errorDescription _ = "Could not parse the request body."
