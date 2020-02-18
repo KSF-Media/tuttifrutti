@@ -94,6 +94,13 @@ packages:
       sha256: b81a5b7a4144dc1cad896e7ba5d3295400820576537dbc37a582fcf588d25a79
   original:
     hackage: these-lens-1@sha256:960f53c44201f5f67d0158162ce39cc7095b958d584d76a2aead358a54c137d3,1138
+- completed:
+    hackage: smtp-mail-0.2.0.0@sha256:b91c81f6dbb41a9ceee8c443385118684ecec55006b77f7d3c0e49cffd2468cf,1211
+    pantry-tree:
+      size: 449
+      sha256: 413c4c7e7c7573c8bf906c136a282aebfe37ecc25492ff4b5ec8c69ff8d190fe
+  original:
+    hackage: smtp-mail-0.2.0.0@sha256:b91c81f6dbb41a9ceee8c443385118684ecec55006b77f7d3c0e49cffd2468cf,1211
 snapshots:
 - completed:
     size: 523700
