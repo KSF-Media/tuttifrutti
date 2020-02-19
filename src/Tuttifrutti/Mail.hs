@@ -2,17 +2,18 @@ module Tuttifrutti.Mail where
 
 import           Tuttifrutti.Prelude
 import qualified Data.Text.Lazy      as Lazy
+import           Data.Text           as Text
 import           Network.Mail.Mime
 import qualified Network.Mail.SMTP   as Mail
 
 data Config = Config
-  { configEmailServer     :: String
+  { configEmailServer     :: Text
     -- ^ name of the email server
   , configEmailServerPort :: Int
     -- ^ port number of the email server
-  , configEmailUser       :: String
+  , configEmailUser       :: Text
     -- ^ email address of the user
-  , configEmailPassword   :: String
+  , configEmailPassword   :: Text
     -- ^ password for the user
   }
 
@@ -40,8 +41,8 @@ send Email{..} Config{..} =
 
   in
     Mail.sendMailWithLogin'
-      configEmailServer
+      (Text.unpack configEmailServer)
       (fromIntegral configEmailServerPort)
-      configEmailUser
-      configEmailPassword
+      (Text.unpack configEmailUser)
+      (Text.unpack configEmailPassword)
       mail'
