@@ -2,9 +2,9 @@ module Tuttifrutti.Mail
   ( -- * Configuration
     Config (..)
     -- * Service handle
-    , Handle
+    , Handle (..)
     -- * Email data structure
-    , Email
+    , Email (..)
     -- ** Create basic handles
     , newMailHandle
   ) where
