@@ -31,8 +31,7 @@ data Handle = Handle
     -- ^ send an email
   }
 
-data Email = Email { emailFrom    :: Text
-                   , emailTo      :: [Text]
+data Email = Email { emailTo      :: [Text]
                    , emailCc      :: [Text]
                    , emailBcc     :: [Text]
                    , emailSubject :: Text
@@ -46,7 +45,7 @@ send Config{..} Email{..}  =
       cc'   = Address Nothing <$> emailCc
       bcc'  = Address Nothing <$> emailBcc
       mail' = Mail.simpleMail
-               (Address Nothing emailFrom)
+               (Address Nothing configEmailUser)
                to'
                cc'
                bcc'
