@@ -1,4 +1,11 @@
-module Tuttifrutti.Mail where
+module Tuttifrutti.Mail
+  ( -- * Configuration
+    Config (..)
+    -- * Service handle
+    , Handle
+      -- ** Create basic handles
+    , newMailHandle
+  ) where
 
 import           Tuttifrutti.Prelude
 import qualified Data.Text.Lazy      as Lazy
@@ -17,6 +24,11 @@ data Config = Config
     -- ^ password for the user
   }
 
+data Handle = Handle
+  { handleSendEmail :: Email -> IO ()
+    -- ^ send an email
+  }
+
 data Email = Email { emailFrom    :: Text
                    , emailTo      :: [Text]
                    , emailCc      :: [Text]
@@ -26,8 +38,8 @@ data Email = Email { emailFrom    :: Text
                    }
 
 -- | Log in to a mail server, send an email, logout.
-send :: Email -> Config -> IO ()
-send Email{..} Config{..} =
+send :: Config -> Email -> IO ()
+send Config{..} Email{..}  =
   let to'   = Address Nothing <$> emailTo
       cc'   = Address Nothing <$> emailCc
       bcc'  = Address Nothing <$> emailBcc
@@ -46,3 +58,9 @@ send Email{..} Config{..} =
       (Text.unpack configEmailUser)
       (Text.unpack configEmailPassword)
       mail'
+
+
+newMailHandle :: Config -> IO Handle
+newMailHandle config = do
+  let handleSendEmail = send config
+  pure Handle{..}
