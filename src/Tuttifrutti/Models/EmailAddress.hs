@@ -22,6 +22,13 @@ instance Swagger.ToParamSchema EmailAddress where
 instance Swagger.ToSchema EmailAddress where
   declareNamedSchema = Swagger.genericDeclareNamedSchemaNewtype Swagger.defaultSchemaOptions Swagger.declareSchema
 
+instance PersistField EmailAddress where
+  toPersistValue (EmailAddress e) = toPersistValue e
+  fromPersistValue e = fmap EmailAddress $ fromPersistValue e
+
+instance PersistFieldSql EmailAddress where
+  sqlType _ = SqlString
+
 instance FromJSON EmailAddress where
   parseJSON = JSON.withText "EmailAddress" $ \email ->
     if isEmailAddressValid $ EmailAddress email

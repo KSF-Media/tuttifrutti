@@ -52,6 +52,7 @@ dependencies:
 - temporary
 - regex-pcre
 - unjson
+- template
 # Development
 - rapid
 # Testing
@@ -100,6 +101,8 @@ dependencies:
 - http-conduit
 - data-vcr
 - http-client-vcr
+- mime-mail
+- smtp-mail
 
 library:
   source-dirs: src
