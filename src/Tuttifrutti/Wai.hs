@@ -4,13 +4,16 @@ import           Tuttifrutti.Prelude
 
 import qualified Data.Aeson.Types            as Json
 import qualified Data.ByteString.Char8       as ByteString8
+import qualified Data.ByteString.Lazy        as LByteString
 import qualified Data.CaseInsensitive        as CI
+import qualified Data.List                   as List
 import qualified Data.Text                   as Text
 import           Data.Text.Encoding          (decodeUtf8)
 import qualified Network.URI                 as URI
 import qualified Network.Wai                 as Wai
 import qualified Network.Wai.Middleware.Cors as Wai
 import qualified Network.Socket              as Socket
+import qualified Network.HTTP.Types          as Http
 
 import qualified Tuttifrutti.Http            as Http
 import qualified Tuttifrutti.Log             as Log
@@ -102,3 +105,52 @@ checkRequestOrigin allowDomains request = do
   let domain = Text.pack $ URI.uriRegName authority
   guard $ any (`allowDomain` domain) allowDomains
   pure origin
+
+-- | Body of 'Wai.Request' is fetched by repeatedly calling @requestBody :: Wai.Request -> IO ByteString@,
+--   which reads the next chunk from the socket. So consuming it is possible only once from a given @Wai.Request@.
+--
+--   This utility reads the body out and returns it as a single bytestring along with a copy of a request whose
+--   'Wai.requestBody' would also return that bytestring as a single chunk, which allows to access the body
+--   from several places to which the request is being passed.
+accessStrictRequestBody :: MonadIO m => Wai.Request -> m (LByteString, Wai.Request)
+accessStrictRequestBody request = do
+  body <- liftIO $ Wai.strictRequestBody request
+  (body,) <$> setRequestBody body request
+
+setRequestBody :: MonadIO m => LByteString -> Wai.Request -> m Wai.Request
+setRequestBody body request = do
+  bodyVar <- newMVar body
+  pure request
+    { Wai.requestBody = maybe mempty LByteString.toStrict <$> tryTakeMVar bodyVar
+    , Wai.requestBodyLength = Wai.KnownLength $ fromInteger $ toInteger $ LByteString.length body
+    }
+
+setRequestQuery :: Http.Query -> Wai.Request -> Wai.Request
+setRequestQuery query request = request
+  { Wai.queryString = query
+  , Wai.rawQueryString = Http.renderQuery True query
+  }
+
+setRequestMethod :: Http.Method -> Wai.Request -> Wai.Request
+setRequestMethod method request = request
+  { Wai.requestMethod = method }
+
+setRequestPath :: [Text] -> Wai.Request -> Wai.Request
+setRequestPath path request = request
+  { Wai.pathInfo = path
+  , Wai.rawPathInfo = foldMap encodeUtf8 $ List.intersperse "/" path
+  }
+
+removeRequestHeader :: Http.HeaderName -> Wai.Request -> Wai.Request
+removeRequestHeader headerName request = request
+  { Wai.requestHeaders = Wai.requestHeaders request
+      & filter (\(name, _value) -> name /= headerName)
+  }
+
+-- | Takes the request consumes the body, and returns two request copies
+--   from which that body can be read. The body of the original request
+--   can't be read after this.
+cloneRequest :: MonadIO m => Wai.Request -> m (Wai.Request, Wai.Request)
+cloneRequest request = do
+  body <- liftIO $ Wai.strictRequestBody request
+  (,) <$> setRequestBody body request <*> setRequestBody body request
