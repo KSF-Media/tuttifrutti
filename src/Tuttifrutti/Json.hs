@@ -54,7 +54,7 @@ stripPrefix prefix =
     { Json.fieldLabelModifier
         = uncapitalize . fromMaybe (error ("Did not find prefix " ++ prefix)) . List.stripPrefix prefix
     }
-  where
-    uncapitalize :: String -> String
-    uncapitalize (head:rest) = Char.toLower head : rest
-    uncapitalize []          = []
+
+uncapitalize :: String -> String
+uncapitalize (head:rest) = Char.toLower head : rest
+uncapitalize []          = []
