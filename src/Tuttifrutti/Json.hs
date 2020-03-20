@@ -5,6 +5,7 @@ module Tuttifrutti.Json
   , nullifyEmptyArrays
   , stripStrings
   , stripPrefix
+  , uncapitalize
   ) where
 
 import           Tuttifrutti.Prelude
