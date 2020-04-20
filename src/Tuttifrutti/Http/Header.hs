@@ -27,6 +27,9 @@ pattern MaxAge = "max-age"
 pattern MaxAge0 :: (CI ByteString, Maybe ByteString)
 pattern MaxAge0 = ("max-age", Just "0")
 
+pattern InvalidateCache :: Maybe CacheControl
+pattern InvalidateCache <- ((maybe False (elem MaxAge0 . cacheControlDirectives)) -> True)
+
 instance FromHttpApiData CacheControl where
   parseHeader = first Text.pack . Atto.parseOnly pCacheControl
   parseQueryParam = first Text.pack . Atto.parseOnly pCacheControl . Text.encodeUtf8
