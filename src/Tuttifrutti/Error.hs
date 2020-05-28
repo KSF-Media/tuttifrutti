@@ -113,6 +113,7 @@ type family HttpStatusCode (httpCode :: Nat) where
   HttpStatusCode 403 = "Forbidden"
   HttpStatusCode 404 = "Not found"
   HttpStatusCode 405 = "Unsupported method"
+  HttpStatusCode 409 = "Conflict"
   HttpStatusCode 415 = "Unsupported media type"
   HttpStatusCode 500 = "Internal server error"
 
