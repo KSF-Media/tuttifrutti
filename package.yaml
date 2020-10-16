@@ -43,10 +43,8 @@ dependencies:
 - psqueues
 - retry
 - range
-- store
 - extensible
 - constraints
-- named >= 0.2
 - attoparsec
 - directory
 - temporary
@@ -104,6 +102,10 @@ dependencies:
 - http-client-vcr
 - mime-mail
 - smtp-mail
+
+extra-deps:
+- named >= 0.2
+- store
 
 library:
   source-dirs: src
