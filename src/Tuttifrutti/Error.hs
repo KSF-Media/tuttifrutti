@@ -14,9 +14,11 @@ import           Tuttifrutti.Prelude
 
 import           Control.Lens              (at)
 import qualified Data.Aeson                as Json
-import           Data.Extensible           (type (>:), Assoc (..), AssocKey, AssocValue, Forall,
-                                            KeyValue, Membership (..), Record, emptyRecord,
-                                            henumerateFor, (<:), (@=))
+import           Data.Extensible           (type (>:), Assoc (..), Forall,
+                                            KeyOf, KeyTargetAre,
+                                            Membership (..), Record, TargetOf,
+                                            emptyRecord, henumerateFor, (<:),
+                                            (@=))
 import qualified Data.Swagger              as Swagger
 import           Data.Swagger.Declare
 import qualified Data.Text                 as Text
@@ -48,7 +50,7 @@ instance
     ErrorType httpCode tag
   , KnownSymbol (HttpStatusCode httpCode)
     -- all extra fields should have their schemas as well
-  , Forall (KeyValue KnownSymbol Swagger.ToSchema) (ExtraFields tag)
+  , Forall (KeyTargetAre KnownSymbol Swagger.ToSchema) (ExtraFields tag)
   )
   => Swagger.ToSchema (ErrorResponse tag)
   where
@@ -80,15 +82,15 @@ instance
                [(Text, Swagger.Referenced Swagger.Schema)]
         declareExtraProperties =
           henumerateFor
-            (Proxy @(KeyValue KnownSymbol Swagger.ToSchema))
+            (Proxy @(KeyTargetAre KnownSymbol Swagger.ToSchema))
             (Proxy @(ExtraFields tag))
             (liftA2 (:) . aProperty)
             (pure [])
           where
             aProperty
               :: forall field key value
-               . ( key ~ AssocKey field
-                 , value ~ AssocValue field
+               . ( key ~ KeyOf field
+                 , value ~ TargetOf field
                  , KnownSymbol key
                  , Swagger.ToSchema value
                  )
@@ -139,7 +141,7 @@ class
     -- | Encode the error in an 'ErrorResponse', the default should usually suffice, but it can
     --   also be defined in per-error fashion
     errorResponse
-      :: (Forall (KeyValue KnownSymbol ToJSON) fields, ToJSON (Record fields))
+      :: (Forall (KeyTargetAre KnownSymbol ToJSON) fields, ToJSON (Record fields))
       => Record fields -> ErrorResponse tag
     errorResponse fields = ErrorResponse{..}
       where
@@ -221,7 +223,7 @@ throwErrorType
   :: forall httpCode tag fields m a.
      ( ErrorType httpCode tag
      , ExtraFields tag ~ fields
-     , Forall (KeyValue KnownSymbol ToJSON) fields
+     , Forall (KeyTargetAre KnownSymbol ToJSON) fields
      , ToJSON (Record fields)
      , MonadThrow m
      , FieldParams fields (m a)

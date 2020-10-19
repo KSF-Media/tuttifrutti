@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9cbd8e3b34404c1be8b63f087ff0e06914476b1f828aa84b2cf16fff667fd1ec
+-- hash: aaa58ac2cec39afb6536e2249e8ed54d99fe501711f12df79d878ed3141305b5
 
 name:           tuttifrutti
 version:        0.1.0.0
@@ -106,6 +106,7 @@ library
     , mime-mail
     , monad-logger
     , mtl
+    , named
     , network
     , network-uri
     , path-pieces
@@ -128,6 +129,7 @@ library
     , servant-server
     , servant-swagger
     , smtp-mail
+    , store
     , swagger2
     , tasty
     , tasty-expected-failure
@@ -237,6 +239,7 @@ test-suite spec
     , mime-mail
     , monad-logger
     , mtl
+    , named
     , network
     , network-uri
     , path-pieces
@@ -259,6 +262,7 @@ test-suite spec
     , servant-server
     , servant-swagger
     , smtp-mail
+    , store
     , swagger2
     , tasty
     , tasty-expected-failure
