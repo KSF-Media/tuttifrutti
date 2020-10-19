@@ -62,13 +62,6 @@ packages:
   original:
     hackage: template-0.2.0.10
 - completed:
-    hackage: range-0.2.1.1@sha256:58c1f98efbe7b2cda0f8fd6bc604703024e929a75dc5a5dd75d17f5f811b433a,3698
-    pantry-tree:
-      size: 1029
-      sha256: 9653a5fbf08eda2e1cf281ddf61bd4f506bb3f24a3f73f0a83ba528876754af3
-  original:
-    hackage: range-0.2.1.1
-- completed:
     hackage: unjson-0.15.3@sha256:2e7a3eba9486310e12601b9219bd879f14308674bb620d4960f55a7a97b8105c,3285
     pantry-tree:
       size: 365

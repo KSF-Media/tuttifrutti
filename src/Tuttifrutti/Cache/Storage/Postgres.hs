@@ -26,7 +26,7 @@ import           Prelude
 import           RIO.List                             (headMaybe)
 
 import qualified Data.Aeson                           as Json
-import qualified Data.Range.Range                     as Range
+import qualified Data.Range                           as Range
 import qualified Database.PostgreSQL.Simple           as PG
 import qualified Database.PostgreSQL.Simple.FromField as PG
 import qualified Database.PostgreSQL.Simple.ToField   as PG
@@ -140,19 +140,18 @@ dropRange tableName Schema{..} connection range =
     Range.SingletonRange k -> PG.execute connection
       "DELETE FROM ? WHERE ? = ?"
       (tableName, fst schemaPriority, k)
-    Range.SpanRange k1 k2 -> PG.execute connection
+    Range.SpanRange (Range.boundValue -> k1) (Range.boundValue -> k2) -> PG.execute connection
       "DELETE FROM ? WHERE ? >= ?, ? <= ?"
       ( tableName
       , fst schemaPriority, k1
       , fst schemaPriority, k2
       )
-    Range.LowerBoundRange k -> PG.execute connection
+    Range.LowerBoundRange (Range.boundValue -> k) -> PG.execute connection
       "DELETE FROM ? WHERE ? >= ?"
       ( tableName, fst schemaPriority, k)
-    Range.UpperBoundRange k -> PG.execute connection
+    Range.UpperBoundRange (Range.boundValue -> k) -> PG.execute connection
       "DELETE FROM ? WHERE ? <= ?"
       (tableName, fst schemaPriority, k)
     Range.InfiniteRange -> PG.execute connection
       "DELETE FROM ?"
       (PG.Only tableName)
-

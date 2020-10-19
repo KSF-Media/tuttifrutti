@@ -1,12 +1,12 @@
 module Tuttifrutti.Cache.Storage.InMemoryRef where
 
-import           Tuttifrutti.Prelude hiding (lookup)
+import           Tuttifrutti.Prelude       hiding (lookup)
 
 import           Data.HashPSQ              (HashPSQ)
 import qualified Data.HashPSQ              as HashPSQ
-import           Data.Range.Range          (Range)
-import qualified Data.Range.Range          as Range
 import           Data.List                 (partition)
+import           Data.Range                (Range)
+import qualified Data.Range                as Range
 
 import qualified Tuttifrutti.Cache.Storage as Storage
 
@@ -70,9 +70,9 @@ alter f key Storage{..} =
         sizeDelta =
           case (elem0, elem1) of
             (Nothing, Nothing) -> 0  -- nothing changed
-            (Nothing, Just _) -> 1  -- element added
-            (Just _, Just _) -> 0  -- element updated
-            (Just _, Nothing) -> -1 -- element removed
+            (Nothing, Just _)  -> 1  -- element added
+            (Just _, Just _)   -> 0  -- element updated
+            (Just _, Nothing)  -> -1 -- element removed
       in ((a, sizeDelta), elem1)
 
 -- | Drop the least recently used elements if the 'cacheSize' exceeds the 'cacheCapacity'.
@@ -105,7 +105,7 @@ dropLowerThan atMost Storage{..} = Storage
 --   Works efficently only for 'UpperBoundRange'. For other ranges
 --   it will do naive filter and fully reconstructing the structure.
 dropRange :: (Hashable k, Ord k, Ord p) => Range p -> Storage k p v -> Storage k p v
-dropRange (Range.UpperBoundRange atMost) storage =
+dropRange (Range.UpperBoundRange (Range.Bound { Range.boundValue = atMost })) storage =
   -- much better than naive filter thanks to 'HashPSQ.atMostView'
   dropLowerThan atMost storage
 dropRange range Storage{..} =
