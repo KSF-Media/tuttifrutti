@@ -1,5 +1,6 @@
-{-# LANGUAGE OverloadedLists #-}
 {-# LANGUAGE OverloadedLabels #-}
+{-# LANGUAGE OverloadedLists  #-}
+{-# LANGUAGE PatternSynonyms  #-}
 -- | Tuttifrutti's adapter to servant.
 --
 --   As it is today, servant is very extensible, but not very configurable.
@@ -30,21 +31,25 @@ module Tuttifrutti.Servant
 
 import           Tuttifrutti.Prelude
 
-import qualified Data.ByteString.Lazy                       as LByteString
-import           Data.Swagger                               as Swagger
-import qualified Data.Text                                  as Text
-import qualified Network.HTTP.Types.Header                  as Http
-import qualified Network.Wai                                as Wai
-import           Servant.Swagger                            as Swagger
+import qualified Data.ByteString.Lazy              as LByteString
+import           Data.Swagger                      as Swagger
+import qualified Data.Text                         as Text
+import           Network.HTTP.Types                (Status (..))
+import qualified Network.HTTP.Types.Header         as Http
+import qualified Network.Wai                       as Wai
+import           Servant.Swagger                   as Swagger
 
-import           Data.Extensible                            (emptyRecord, (<:), (@=))
-import           Servant                                    as Servant hiding (JSON)
+import           Data.Extensible                   (emptyRecord, (<:), (@=))
+import           Servant                           as Servant hiding (JSON)
 import qualified Servant
-import           Servant.API.ContentTypes                   (canHandleCTypeH)
-import           Servant.Server.Internal.Delayed            (addBodyCheck)
-import           Servant.Server.Internal.DelayedIO          (delayedFailFatal, withRequest)
+import           Servant.API.ContentTypes          (canHandleCTypeH)
+import qualified Servant.Client.Core               as Servant
+import           Servant.Server.Internal.Delayed   (addBodyCheck)
+import           Servant.Server.Internal.DelayedIO (delayedFailFatal,
+                                                    withRequest)
 
-import qualified Tuttifrutti.Error as Error
+
+import qualified Tuttifrutti.Error                 as Error
 
 
 -- | This 'JSON' type shadows the one from servant. It's purpose is to label 'application/json'
@@ -125,3 +130,7 @@ instance (HasServer api context, MimeUnrender JSON a, FromJSON a, ToSchema a)
       mediaTypeError =
         Error.servantErrResponse
           $ Error.errorResponse @415 @"unsupported_media_type" emptyRecord
+
+-- | Matches a ClientError.FailureResponse by HTTP status code, returning the response body
+pattern Failure :: Int -> LByteString.ByteString -> Servant.ClientError
+pattern Failure status responseBody <- Servant.FailureResponse _ Servant.Response { responseStatusCode = Status { statusCode = status }, responseBody }
