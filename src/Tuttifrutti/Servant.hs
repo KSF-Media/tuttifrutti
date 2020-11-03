@@ -132,5 +132,5 @@ instance (HasServer api context, MimeUnrender JSON a, FromJSON a, ToSchema a)
           $ Error.errorResponse @415 @"unsupported_media_type" emptyRecord
 
 -- | Matches a ClientError by a HTTP status code, returning the response body
-pattern ServantError :: Int -> LByteString.ByteString -> Servant.ClientError
-pattern ServantError status responseBody <- Servant.FailureResponse _ Servant.Response { responseStatusCode = Status { statusCode = status }, responseBody }
+pattern Failure :: Int -> LByteString.ByteString -> Servant.ClientError
+pattern Failure status responseBody <- Servant.FailureResponse _ Servant.Response { responseStatusCode = Status { statusCode = status }, responseBody }
