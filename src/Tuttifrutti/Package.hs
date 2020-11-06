@@ -4,8 +4,6 @@ module Tuttifrutti.Package where
 import           Prelude
 import           Tuttifrutti.Prelude
 
-import           Control.Lens        ((^..))
-
 import qualified Data.Aeson          as Json
 import qualified Data.Aeson.Lens     as Json
 import qualified Data.Yaml           as Yaml
@@ -22,4 +20,3 @@ getDefaultExtensions path = do
             . Json.values
             . Json._String
   pure extensions
-

@@ -9,11 +9,11 @@ import qualified Data.CaseInsensitive        as CI
 import qualified Data.List                   as List
 import qualified Data.Text                   as Text
 import           Data.Text.Encoding          (decodeUtf8)
+import qualified Network.HTTP.Types          as Http
+import qualified Network.Socket              as Socket
 import qualified Network.URI                 as URI
 import qualified Network.Wai                 as Wai
 import qualified Network.Wai.Middleware.Cors as Wai
-import qualified Network.Socket              as Socket
-import qualified Network.HTTP.Types          as Http
 
 import qualified Tuttifrutti.Http            as Http
 import qualified Tuttifrutti.Log             as Log
@@ -65,7 +65,6 @@ sockAddrToJSON = object . \case
     , "scope" .= scope
     ]
   Socket.SockAddrUnix path -> [ "unix" .= toJSON path ]
-  Socket.SockAddrCan can -> [ "can" .= toJSON can ]
 
 -- | Include request id everywhere where it' needed (logging, outgoing calls, etc)
 withXRequestId

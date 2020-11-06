@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 20eb63ea2e43dafacaa8554393f961435dc26d3b80d817fb8b875d4a295a0087
+-- hash: aaa58ac2cec39afb6536e2249e8ed54d99fe501711f12df79d878ed3141305b5
 
 name:           tuttifrutti
 version:        0.1.0.0
@@ -106,7 +106,7 @@ library
     , mime-mail
     , monad-logger
     , mtl
-    , named >=0.2
+    , named
     , network
     , network-uri
     , path-pieces
@@ -239,7 +239,7 @@ test-suite spec
     , mime-mail
     , monad-logger
     , mtl
-    , named >=0.2
+    , named
     , network
     , network-uri
     , path-pieces
