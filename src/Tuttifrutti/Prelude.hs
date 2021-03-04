@@ -114,7 +114,7 @@ throwLeft m = m >>= onLeft throwM
 -- Note: Persistent is deprecating PersistDbSpecific:
 -- `Deprecated: Deprecated since 2.11 because of inconsistent escaping behavior across backends. The Postgres backend escapes these values, while the MySQL backend does not. If you are using this, please switch to PersistLiteral or PersistLiteralEscaped based on your needs.`
 instance PersistField UUID where
-  toPersistValue = PersistLiteral . UUID.toASCIIBytes
+  toPersistValue = PersistLiteralEscaped . UUID.toASCIIBytes
   fromPersistValue (PersistLiteral uuid) =
     case UUID.fromASCIIBytes uuid of
       Nothing -> Left $ "Tuttifrutti.DB: Failed to deserialize a UUID; received: " <> tshow uuid
