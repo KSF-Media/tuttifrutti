@@ -3,11 +3,7 @@ module Tuttifrutti.Models.PersonaToken where
 import           Tuttifrutti.Prelude
 
 import           Data.Swagger
-import           Database.Persist            (PersistField)
-import           Database.Persist.Postgresql (PersistFieldSql)
 import           Web.HttpApiData
-import           Web.PathPieces              (PathPiece)
-
 
 newtype PersonaToken = PersonaToken { unPersonaToken :: Text }
   deriving ( Show, Read, Eq, Ord

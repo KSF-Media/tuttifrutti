@@ -12,7 +12,6 @@ import qualified Data.Char as Char
 import qualified Data.Text as Text
 import qualified Data.Text.Encoding as Text
 import           Data.Swagger   (ToParamSchema(..))
-import           Data.Bifunctor (first)
 import           Web.HttpApiData
 
 -- | @Cache-Control@ header contains a list of directives identified case-insentively
