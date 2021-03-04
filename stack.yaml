@@ -1,4 +1,4 @@
-resolver: lts-16.18
+resolver: lts-17.5
 packages:
 - .
 extra-deps:
@@ -21,6 +21,9 @@ extra-deps:
 - store-core-0.4.4.3@sha256:50b3ef13ab5f82cccf665bd29edf37f69ef1e94c22802c2c94d0f74ce8808f09,1430
 - th-utilities-0.2.4.0@sha256:ba19cd8441aa43dbaed40e9055bb5a7cbd7cf9e154f5253c6bf9293af8b1f96b,1869
 - named-0.3.0.1@sha256:2975d50c9c5d88095026ffc1303d2d9be52e5f588a8f8bcb7003a04b79f10a06,2312
+- aeson-1.4.7.1@sha256:6d8d2fd959b7122a1df9389cf4eca30420a053d67289f92cdc0dbc0dab3530ba,7098
+- th-abstraction-0.4.2.0@sha256:2c754cd15370f8c59c8e6c37d44428a78d0b4afc94e13b3958a1a50cd16f6e84,2124
+allow-newer: true
 nix:
   enable: false
   packages:
