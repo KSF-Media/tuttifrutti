@@ -2,7 +2,7 @@ module Tuttifrutti.Cache.Storage where
 
 import           Tuttifrutti.Prelude
 
-import           Data.Range.Range    (Range (..))
+import           Data.Range          (Bound (..), BoundType (..), Range (..))
 
 -- | Storage implementation. This defines primitive operations, from which
 --   all others are derived.
@@ -62,4 +62,4 @@ lookupValid h k validate =
 
 -- | Drop elements whose priority is less than given value.
 dropLowerThan :: Handle k p v m -> p -> m ()
-dropLowerThan h = dropRange h . UpperBoundRange
+dropLowerThan h p =  dropRange h $ UpperBoundRange (Bound { boundValue = p, boundType = Inclusive })

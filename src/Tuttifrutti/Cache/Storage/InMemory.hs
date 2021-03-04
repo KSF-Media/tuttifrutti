@@ -1,17 +1,16 @@
 module Tuttifrutti.Cache.Storage.InMemory where
 
-import           Tuttifrutti.Prelude hiding (lookup)
+import           Tuttifrutti.Prelude       hiding (lookup)
 
 import qualified Data.ByteString           as ByteString
-import           Data.ByteString.Short     (ShortByteString)
 import qualified Data.ByteString.Short     as ShortByteString
 import           Data.HashPSQ              (HashPSQ)
 import qualified Data.HashPSQ              as HashPSQ
+import           Data.List                 (partition)
+import           Data.Range                (Range)
+import qualified Data.Range                as Range
 import           Data.Store                (Store)
 import qualified Data.Store                as Store
-import           Data.Range.Range          (Range)
-import qualified Data.Range.Range          as Range
-import           Data.List (partition)
 
 import qualified Tuttifrutti.Cache.Storage as Storage
 
@@ -43,7 +42,7 @@ data Storage k p v = Storage
     --   It doesn't account for the space occupied by the queue structure itself.
     --   For details on how this gets calculated see 'occupiedSpace'.
     storageSize     :: {-# UNPACK #-} !Int
-    -- | 'storageSize' should not exceed this limit    
+    -- | 'storageSize' should not exceed this limit
   , storageCapacity :: {-# UNPACK #-} !Int
     -- | The cache queue itself. The 'HashPSQ' is an efficient implementation of a priority queue.
     --   UTCTime is used as a 'priority' which allows us efficiently drop the least recently used items
@@ -51,7 +50,7 @@ data Storage k p v = Storage
     --
     -- There is no UNPACK pragma on that field as we want it to be boxed.
     -- I assume that otherwise it'll have to be boxed/unboxed every time we pass
-    -- it to lazy HashPSQ functions.  
+    -- it to lazy HashPSQ functions.
   , storageQueue    :: !(HashPSQ ShortByteString p ByteString)
   } deriving (Show)
 
@@ -124,7 +123,7 @@ dropLowerThan atMost Storage{..} = Storage
 --   Works efficently only for 'UpperBoundRange'. For other ranges
 --   it will do naive filter and fully reconstructing the structure.
 dropRange :: Ord p => Range p -> Storage k p v -> Storage k p v
-dropRange (Range.UpperBoundRange atMost) storage =
+dropRange (Range.UpperBoundRange (Range.Bound { Range.boundValue = atMost })) storage =
   -- much better than naive filter thanks to 'HashPSQ.atMostView'
   dropLowerThan atMost storage
 dropRange range Storage{..} =

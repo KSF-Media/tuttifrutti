@@ -43,10 +43,8 @@ dependencies:
 - psqueues
 - retry
 - range
-- store
 - extensible
 - constraints
-- named >= 0.2
 - attoparsec
 - directory
 - temporary
@@ -77,6 +75,7 @@ dependencies:
 - servant
 - servant-server
 - servant-client
+- servant-client-core
 - servant-swagger
 - swagger2
 - path-pieces
@@ -103,7 +102,8 @@ dependencies:
 - http-client-vcr
 - mime-mail
 - smtp-mail
-
+- store
+- named
 library:
   source-dirs: src
   ghc-options:

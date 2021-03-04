@@ -1,0 +1,289 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: aaa58ac2cec39afb6536e2249e8ed54d99fe501711f12df79d878ed3141305b5
+
+name:           tuttifrutti
+version:        0.1.0.0
+synopsis:       Components for KSF Media services
+description:    Ready-made components to quickly build KSF Media services
+category:       Web
+homepage:       https://github.com/KSF-Media/tuttifrutti#readme
+bug-reports:    https://github.com/KSF-Media/tuttifrutti/issues
+author:         Fabrizio Ferrai
+maintainer:     fabrizio.ferrai@gmail.com
+copyright:      2018 KSF Media
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/KSF-Media/tuttifrutti
+
+library
+  exposed-modules:
+      Tuttifrutti
+      Tuttifrutti.App
+      Tuttifrutti.Cache
+      Tuttifrutti.Cache.Storage
+      Tuttifrutti.Cache.Storage.InMemory
+      Tuttifrutti.Cache.Storage.InMemoryRef
+      Tuttifrutti.Cache.Storage.Postgres
+      Tuttifrutti.DevelMain
+      Tuttifrutti.Env
+      Tuttifrutti.Error
+      Tuttifrutti.Http
+      Tuttifrutti.Http.Connection
+      Tuttifrutti.Http.Handle
+      Tuttifrutti.Http.Header
+      Tuttifrutti.Json
+      Tuttifrutti.Log
+      Tuttifrutti.Log.Handle
+      Tuttifrutti.Mail
+      Tuttifrutti.Models.EmailAddress
+      Tuttifrutti.Models.PersonaToken
+      Tuttifrutti.Package
+      Tuttifrutti.Persist
+      Tuttifrutti.Pool
+      Tuttifrutti.Postgres
+      Tuttifrutti.Prelude
+      Tuttifrutti.Random
+      Tuttifrutti.RequestId
+      Tuttifrutti.Servant
+      Tuttifrutti.Servant.Health
+      Tuttifrutti.Servant.Redirect
+      Tuttifrutti.Swagger
+      Tuttifrutti.Template
+      Tuttifrutti.TestPrelude
+      Tuttifrutti.Time
+      Tuttifrutti.Time.Handle
+      Tuttifrutti.Wai
+  other-modules:
+      Paths_tuttifrutti
+  hs-source-dirs:
+      src
+  default-extensions: AutoDeriveTypeable BangPatterns BinaryLiterals ConstraintKinds DataKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveFunctor DeriveGeneric DeriveTraversable DerivingStrategies DoAndIfThenElse EmptyDataDecls ExistentialQuantification FlexibleContexts FlexibleInstances FunctionalDependencies GADTs GeneralizedNewtypeDeriving InstanceSigs KindSignatures LambdaCase MonadFailDesugaring MultiParamTypeClasses MultiWayIf NamedFieldPuns NoImplicitPrelude OverloadedStrings PartialTypeSignatures PatternGuards PolyKinds RankNTypes RecordWildCards ScopedTypeVariables StandaloneDeriving TupleSections TypeApplications TypeFamilies TypeOperators TypeSynonymInstances ViewPatterns
+  ghc-options: -Wall
+  build-depends:
+      aeson
+    , aeson-diff
+    , aeson-pretty
+    , attoparsec
+    , base >=4.7 && <5
+    , bytestring
+    , case-insensitive
+    , conduit
+    , conduit-combinators
+    , conduit-extra
+    , constraints
+    , containers
+    , contravariant
+    , data-has
+    , data-vcr
+    , directory
+    , envy
+    , errors
+    , exceptions
+    , extensible
+    , fast-logger
+    , hspec
+    , hspec-expectations
+    , hspec-expectations-lifted
+    , http-api-data
+    , http-client
+    , http-client-vcr
+    , http-conduit
+    , http-types
+    , insert-ordered-containers
+    , lens
+    , lens-aeson
+    , mime-mail
+    , monad-logger
+    , mtl
+    , named
+    , network
+    , network-uri
+    , path-pieces
+    , persistent
+    , persistent-postgresql
+    , persistent-template
+    , postgresql-simple
+    , psqueues
+    , random
+    , range
+    , rapid
+    , regex-pcre
+    , resource-pool
+    , retry
+    , rio
+    , semialign
+    , servant
+    , servant-client
+    , servant-client-core
+    , servant-server
+    , servant-swagger
+    , smtp-mail
+    , store
+    , swagger2
+    , tasty
+    , tasty-expected-failure
+    , tasty-golden
+    , tasty-hspec
+    , tasty-hunit
+    , tasty-vcr
+    , template
+    , temporary
+    , text
+    , these
+    , these-lens
+    , time
+    , transformers
+    , unjson
+    , unliftio
+    , unordered-containers
+    , uuid
+    , wai
+    , wai-cors
+    , wai-extra
+    , yaml
+  default-language: Haskell2010
+
+test-suite spec
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Tuttifrutti.Cache.Storage.InMemory.Tests
+      Tuttifrutti.Cache.Tests
+      Tuttifrutti
+      Tuttifrutti.App
+      Tuttifrutti.Cache
+      Tuttifrutti.Cache.Storage
+      Tuttifrutti.Cache.Storage.InMemory
+      Tuttifrutti.Cache.Storage.InMemoryRef
+      Tuttifrutti.Cache.Storage.Postgres
+      Tuttifrutti.DevelMain
+      Tuttifrutti.Env
+      Tuttifrutti.Error
+      Tuttifrutti.Http
+      Tuttifrutti.Http.Connection
+      Tuttifrutti.Http.Handle
+      Tuttifrutti.Http.Header
+      Tuttifrutti.Json
+      Tuttifrutti.Log
+      Tuttifrutti.Log.Handle
+      Tuttifrutti.Mail
+      Tuttifrutti.Models.EmailAddress
+      Tuttifrutti.Models.PersonaToken
+      Tuttifrutti.Package
+      Tuttifrutti.Persist
+      Tuttifrutti.Pool
+      Tuttifrutti.Postgres
+      Tuttifrutti.Prelude
+      Tuttifrutti.Random
+      Tuttifrutti.RequestId
+      Tuttifrutti.Servant
+      Tuttifrutti.Servant.Health
+      Tuttifrutti.Servant.Redirect
+      Tuttifrutti.Swagger
+      Tuttifrutti.Template
+      Tuttifrutti.TestPrelude
+      Tuttifrutti.Time
+      Tuttifrutti.Time.Handle
+      Tuttifrutti.Wai
+      Paths_tuttifrutti
+  hs-source-dirs:
+      test
+      src
+  default-extensions: AutoDeriveTypeable BangPatterns BinaryLiterals ConstraintKinds DataKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveFunctor DeriveGeneric DeriveTraversable DerivingStrategies DoAndIfThenElse EmptyDataDecls ExistentialQuantification FlexibleContexts FlexibleInstances FunctionalDependencies GADTs GeneralizedNewtypeDeriving InstanceSigs KindSignatures LambdaCase MonadFailDesugaring MultiParamTypeClasses MultiWayIf NamedFieldPuns NoImplicitPrelude OverloadedStrings PartialTypeSignatures PatternGuards PolyKinds RankNTypes RecordWildCards ScopedTypeVariables StandaloneDeriving TupleSections TypeApplications TypeFamilies TypeOperators TypeSynonymInstances ViewPatterns
+  build-depends:
+      HUnit
+    , aeson
+    , aeson-diff
+    , aeson-pretty
+    , attoparsec
+    , base >=4.7 && <5
+    , bytestring
+    , case-insensitive
+    , conduit
+    , conduit-combinators
+    , conduit-extra
+    , constraints
+    , containers
+    , contravariant
+    , data-has
+    , data-vcr
+    , directory
+    , doctest
+    , envy
+    , errors
+    , exceptions
+    , extensible
+    , fast-logger
+    , hspec
+    , hspec-expectations
+    , hspec-expectations-lifted
+    , http-api-data
+    , http-client
+    , http-client-vcr
+    , http-conduit
+    , http-types
+    , insert-ordered-containers
+    , lens
+    , lens-aeson
+    , mime-mail
+    , monad-logger
+    , mtl
+    , named
+    , network
+    , network-uri
+    , path-pieces
+    , persistent
+    , persistent-postgresql
+    , persistent-template
+    , postgresql-simple
+    , psqueues
+    , random
+    , range
+    , rapid
+    , regex-pcre
+    , resource-pool
+    , retry
+    , rio
+    , semialign
+    , servant
+    , servant-client
+    , servant-client-core
+    , servant-server
+    , servant-swagger
+    , smtp-mail
+    , store
+    , swagger2
+    , tasty
+    , tasty-expected-failure
+    , tasty-golden
+    , tasty-hspec
+    , tasty-hunit
+    , tasty-vcr
+    , template
+    , temporary
+    , text
+    , these
+    , these-lens
+    , time
+    , transformers
+    , tuttifrutti
+    , unjson
+    , unliftio
+    , unordered-containers
+    , uuid
+    , wai
+    , wai-cors
+    , wai-extra
+    , yaml
+  default-language: Haskell2010

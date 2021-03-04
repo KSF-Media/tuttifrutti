@@ -5,27 +5,27 @@ module Tuttifrutti.Json
   , nullifyEmptyArrays
   , stripStrings
   , stripPrefix
+  , uncapitalize
   ) where
 
 import           Tuttifrutti.Prelude
 
-import           Data.Aeson          (toJSON)
 import qualified Data.Aeson          as Json
 import qualified Data.Char           as Char
-import qualified Data.List as List
-import qualified Data.Text           as Text
 import           Data.Constraint
 import           Data.Extensible
 import qualified Data.HashMap.Lazy   as HashMap
+import qualified Data.List           as List
+import qualified Data.Text           as Text
 
 -- | Generically convert a record to a json object.
-toJsonRecord :: forall xs. Forall (KeyValue KnownSymbol ToJSON) xs => Record xs -> Json.Value
+toJsonRecord :: forall xs. Forall (KeyTargetAre KnownSymbol ToJSON) xs => Record xs -> Json.Value
 toJsonRecord =
   Json.Object . HashMap.fromList . flip appEndo [] . hfoldMap getConst
     . hzipWith
         (\(Comp Dict) v -> Const $ Endo
-          ((fromString $ symbolVal $ proxyAssocKey v, toJSON $ getField v):))
-        (library :: Comp Dict (KeyValue KnownSymbol ToJSON) :* xs)
+          ((fromString $ symbolVal $ proxyKeyOf v, toJSON $ getField v):))
+        (library :: xs :& Comp Dict (KeyTargetAre KnownSymbol ToJSON))
 
 -- | Go over the 'Json.Value' and turn all the @Json.String ""@ into 'Json.Null'.
 nullifyEmptyStrings :: Json.Value -> Json.Value
@@ -36,10 +36,10 @@ nullifyEmptyStrings v = v
 
 -- | Go over the 'Json.Value' and apply `Text.strip` to every 'Json.String'.
 stripStrings :: Json.Value -> Json.Value
-stripStrings (Json.String s) = Json.String $ Text.strip s
-stripStrings (Json.Array arr) = Json.Array (stripStrings <$> arr)
+stripStrings (Json.String s)   = Json.String $ Text.strip s
+stripStrings (Json.Array arr)  = Json.Array (stripStrings <$> arr)
 stripStrings (Json.Object obj) = Json.Object (stripStrings <$> obj)
-stripStrings v = v
+stripStrings v                 = v
 
 -- | Go over the 'Json.Value' and turn all the @Json.Array []@ into 'Json.Null'.
 nullifyEmptyArrays :: Json.Value -> Json.Value
@@ -54,7 +54,7 @@ stripPrefix prefix =
     { Json.fieldLabelModifier
         = uncapitalize . fromMaybe (error ("Did not find prefix " ++ prefix)) . List.stripPrefix prefix
     }
-  where
-    uncapitalize :: String -> String
-    uncapitalize (head:rest) = Char.toLower head : rest
-    uncapitalize []          = []
+
+uncapitalize :: String -> String
+uncapitalize (head:rest) = Char.toLower head : rest
+uncapitalize []          = []
