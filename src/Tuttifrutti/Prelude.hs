@@ -52,6 +52,7 @@ import           Data.Monoid                 as X (Any (..), Endo (..),
 import           Data.Proxy                  as X (Proxy (Proxy))
 import           Data.Semigroup              as X (Semigroup, sconcat)
 import           Data.String                 as X (IsString (..))
+import qualified Data.Text                   as Text (replace)
 import           Data.These                  as X (These (..))
 import           Data.These.Lens             as X (_That, _These, _This)
 import           Data.Traversable            as X (for, forM)
@@ -108,17 +109,21 @@ onLeft f = either f pure
 throwLeft :: (Exception e, MonadThrow m) => m (Either e b) -> m b
 throwLeft m = m >>= onLeft throwM
 
-
 -- Note: orphan instances copied straight from Persistent documentation
 -- Note: we're taking advantage of PostgreSQL understanding UUID values,
--- thus "PersistDbSpecific"
+-- Note: Persistent is deprecating PersistDbSpecific:
+-- `Deprecated: Deprecated since 2.11 because of inconsistent escaping behavior across backends. The Postgres backend escapes these values, while the MySQL backend does not. If you are using this, please switch to PersistLiteral or PersistLiteralEscaped based on your needs.`
 instance PersistField UUID where
-  toPersistValue = PersistDbSpecific . UUID.toASCIIBytes
-  fromPersistValue (PersistDbSpecific uuid) =
+  toPersistValue = PersistLiteral . UUID.toASCIIBytes
+  fromPersistValue (PersistLiteral uuid) =
     case UUID.fromASCIIBytes uuid of
       Nothing -> Left $ "Tuttifrutti.DB: Failed to deserialize a UUID; received: " <> tshow uuid
       Just uuid' -> Right uuid'
-  fromPersistValue x = Left $ "Tuttifrutti.DB: When trying to deserialize a UUID: expected PersistDbSpecific, received: " <> tshow x
+  fromPersistValue (PersistLiteralEscaped uuid) =
+    case UUID.fromText $ Text.replace "\"" "" $ decodeUtf8Lenient uuid of
+      Nothing -> Left $ "Tuttifrutti.DB: Failed to deserialize a UUID; received: PersistLiteralEscaped " <> tshow uuid
+      Just uuid' -> Right uuid'
+  fromPersistValue x = Left $ "Tuttifrutti.DB: When trying to deserialize a UUID: expected PersistLiteralEscaped or PersistLiteral, received: " <> tshow x
 
 instance PersistFieldSql UUID where
   sqlType _ = SqlOther "uuid"
