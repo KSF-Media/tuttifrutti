@@ -1,17 +1,18 @@
 module Tuttifrutti.Http.Connection where
 
-import Tuttifrutti.Prelude
+import           Tuttifrutti.Prelude
 
-import Network.HTTP.Client.Internal (Connection(..), Manager(..), ManagerSettings(..))
+import           Network.HTTP.Client.Internal (Connection (..),
+                                               ManagerSettings (..))
 
 data ConnectionProxy = ConnectionProxy
-  { connectionProxyRead  :: ByteString -> IO ByteString
+  { connectionProxyRead   :: ByteString -> IO ByteString
     -- ^ called whenever somebody reads from connection
   , connectionProxyUnread :: ByteString -> IO ByteString
     -- ^ called whenever somebody returns some read data
-  , connectionProxyWrite :: ByteString -> IO ByteString
+  , connectionProxyWrite  :: ByteString -> IO ByteString
     -- ^ called whenever somebody writes to connection
-  , connectionProxyClose :: IO ()
+  , connectionProxyClose  :: IO ()
     -- ^ called to close the connection
   }
 
