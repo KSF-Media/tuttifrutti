@@ -1,5 +1,5 @@
 {-# LANGUAGE TemplateHaskell #-}
-module Tuttifrutti.Models.Paper where
+module Tuttifrutti.Models.PaperCode where
 
 import           Tuttifrutti.Prelude
 
