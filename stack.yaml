@@ -1,33 +1,34 @@
 resolver: lts-17.5
 packages:
-- .
+  - .
 extra-deps:
-- git: https://github.com/KSF-Media/haskell-vcr
-  commit: 71a30452e4dd8ef6b9a0d615d2729e4b1ec01b3a
-  subdirs:
-  - data-vcr
-  - tasty-vcr
-  - http-client-vcr
-- git: https://github.com/KSF-Media/rapid
-  commit: 5186d5ced42f4bbb4647bf8ef645c8a7d8e4f026
-- template-0.2.0.10
-- unjson-0.15.3
-- these-lens-1
-- smtp-mail-0.2.0.0@sha256:b91c81f6dbb41a9ceee8c443385118684ecec55006b77f7d3c0e49cffd2468cf,1211
-- extensible-0.8.1@sha256:280840e31d92510b342d6a8d82d7af39cfd250194f9c26fca1d5cd406ee206f6,2946
-- incremental-0.3.1@sha256:9c697bae4f7e5ceb144bde13e03ca2f36b4bc2d0c92bbc02e0a604231ee279c2,1153
-- membership-0@sha256:3a11d8fd53cb1a76bb9273e6c929bbf9d649f109714bf487abb3143be04ddc81,995
-- store-0.7.7@sha256:8855feafa52b623f280d9a6b7abea36b7e9eec3cd68db4d476a5b1ece125a92a,8001
-- store-core-0.4.4.3@sha256:50b3ef13ab5f82cccf665bd29edf37f69ef1e94c22802c2c94d0f74ce8808f09,1430
-- th-utilities-0.2.4.0@sha256:ba19cd8441aa43dbaed40e9055bb5a7cbd7cf9e154f5253c6bf9293af8b1f96b,1869
-- named-0.3.0.1@sha256:2975d50c9c5d88095026ffc1303d2d9be52e5f588a8f8bcb7003a04b79f10a06,2312
-- aeson-1.4.7.1@sha256:6d8d2fd959b7122a1df9389cf4eca30420a053d67289f92cdc0dbc0dab3530ba,7098
-- th-abstraction-0.4.2.0@sha256:2c754cd15370f8c59c8e6c37d44428a78d0b4afc94e13b3958a1a50cd16f6e84,2124
+  - git: https://github.com/KSF-Media/haskell-vcr
+    commit: 71a30452e4dd8ef6b9a0d615d2729e4b1ec01b3a
+    subdirs:
+      - data-vcr
+      - tasty-vcr
+      - http-client-vcr
+  - git: https://github.com/KSF-Media/rapid
+    commit: 5186d5ced42f4bbb4647bf8ef645c8a7d8e4f026
+  - template-0.2.0.10
+  - unjson-0.15.3
+  - these-lens-1
+  - smtp-mail-0.2.0.0@sha256:b91c81f6dbb41a9ceee8c443385118684ecec55006b77f7d3c0e49cffd2468cf,1211
+  - extensible-0.8.1@sha256:280840e31d92510b342d6a8d82d7af39cfd250194f9c26fca1d5cd406ee206f6,2946
+  - incremental-0.3.1@sha256:9c697bae4f7e5ceb144bde13e03ca2f36b4bc2d0c92bbc02e0a604231ee279c2,1153
+  - membership-0@sha256:3a11d8fd53cb1a76bb9273e6c929bbf9d649f109714bf487abb3143be04ddc81,995
+  - store-0.7.7@sha256:8855feafa52b623f280d9a6b7abea36b7e9eec3cd68db4d476a5b1ece125a92a,8001
+  - store-core-0.4.4.3@sha256:50b3ef13ab5f82cccf665bd29edf37f69ef1e94c22802c2c94d0f74ce8808f09,1430
+  - th-utilities-0.2.4.0@sha256:ba19cd8441aa43dbaed40e9055bb5a7cbd7cf9e154f5253c6bf9293af8b1f96b,1869
+  - named-0.3.0.1@sha256:2975d50c9c5d88095026ffc1303d2d9be52e5f588a8f8bcb7003a04b79f10a06,2312
+  - aeson-1.4.7.1@sha256:6d8d2fd959b7122a1df9389cf4eca30420a053d67289f92cdc0dbc0dab3530ba,7098
+  - th-abstraction-0.4.2.0@sha256:2c754cd15370f8c59c8e6c37d44428a78d0b4afc94e13b3958a1a50cd16f6e84,2124
 allow-newer: true
 nix:
   enable: false
   packages:
-  - postgresql
-  - zlib
-  - pcre
-  - lzma
+    - postgresql
+    - zlib
+    - pcre
+    - lzma
+    - pkg-config
