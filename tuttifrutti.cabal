@@ -47,6 +47,7 @@ library
       Tuttifrutti.Log.Handle
       Tuttifrutti.Mail
       Tuttifrutti.Models.EmailAddress
+      Tuttifrutti.Models.PaperCode
       Tuttifrutti.Models.PersonaToken
       Tuttifrutti.Package
       Tuttifrutti.Persist
