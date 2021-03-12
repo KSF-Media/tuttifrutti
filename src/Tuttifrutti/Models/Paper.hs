@@ -6,20 +6,20 @@ import           Tuttifrutti.Prelude
 import qualified Data.Text           as Text
 import           Database.Persist.TH (derivePersistField)
 
-data Paper
+data PaperCode
   = HBL
   | ON
   | VN
   | HT
   deriving (Show, Eq, Generic, Read, Data, Ord)
-derivePersistField "Paper"
+derivePersistField "PaperCode"
 
-instance FromJSON Paper
-instance ToJSON Paper
+instance FromJSON PaperCode
+instance ToJSON PaperCode
 
-toPaper :: Text -> Paper
-toPaper paperText =
-  case Text.toUpper paperText of
+toPaperCode :: Text -> PaperCode
+toPaperCode paperCodeText =
+  case Text.toUpper paperCodeText of
     "HBL" -> HBL
     "ON"  -> ON
     "ÖN"  -> ON
