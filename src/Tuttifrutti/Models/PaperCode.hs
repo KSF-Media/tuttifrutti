@@ -4,6 +4,7 @@ module Tuttifrutti.Models.PaperCode where
 import           Tuttifrutti.Prelude
 
 import qualified Data.Text           as Text
+import           Data.Unjson
 import           Database.Persist.TH (derivePersistField)
 
 data PaperCode
@@ -16,6 +17,8 @@ derivePersistField "PaperCode"
 
 instance FromJSON PaperCode
 instance ToJSON PaperCode
+instance Unjson PaperCode where
+  unjsonDef = unjsonAeson
 
 toPaperCode :: Text -> PaperCode
 toPaperCode paperCodeText =
