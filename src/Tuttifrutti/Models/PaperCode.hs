@@ -20,9 +20,7 @@ derivePersistField "PaperCode"
 instance FromJSON PaperCode where
   parseJSON = withText "PaperCode" (pure . toPaperCode)
 instance ToJSON PaperCode where
-  toJSON c = case c of
-    UnknownPaperCode p -> String p
-    _                  -> String $ tshow c
+  toJSON = String . fromPaperCode
 instance Unjson PaperCode where
   unjsonDef = unjsonAeson
 
@@ -36,3 +34,9 @@ toPaperCode paperCodeText =
     "VN"  -> VN
     "HT"  -> HT
     p     -> UnknownPaperCode p
+
+fromPaperCode :: PaperCode -> Text
+fromPaperCode paperCode =
+  case paperCode of
+    UnknownPaperCode p -> p
+    _                  -> tshow paperCode
