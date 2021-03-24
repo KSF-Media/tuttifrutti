@@ -145,6 +145,13 @@ packages:
       sha256: 4d7de058f3dd57de2a89ea92e812c37ab5418d2fbac620db8c815e7eb4d856ac
   original:
     hackage: th-abstraction-0.4.2.0@sha256:2c754cd15370f8c59c8e6c37d44428a78d0b4afc94e13b3958a1a50cd16f6e84,2124
+- completed:
+    hackage: raven-haskell-0.1.4.0@sha256:64eca8650d140fc853a951af0cf4e2ce255b90491b9e3014d82be2e79593c43a,1251
+    pantry-tree:
+      size: 632
+      sha256: 19c2aaf9c09d341108777e3a4de975841f81518ed271b156983d25ec622dd266
+  original:
+    hackage: raven-haskell-0.1.4.0@sha256:64eca8650d140fc853a951af0cf4e2ce255b90491b9e3014d82be2e79593c43a,1251
 snapshots:
 - completed:
     size: 565266
