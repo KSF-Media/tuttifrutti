@@ -66,6 +66,7 @@ dependencies:
 # Logging
 - fast-logger
 - template
+- raven-haskell
 # Serialization formats
 - aeson
 - aeson-diff

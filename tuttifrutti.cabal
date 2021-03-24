@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: aaa58ac2cec39afb6536e2249e8ed54d99fe501711f12df79d878ed3141305b5
+-- hash: 36702af6f2379e7e28cbbcf927a36064a999731b0b566d8d43af85cd4699863a
 
 name:           tuttifrutti
 version:        0.1.0.0
@@ -56,6 +56,7 @@ library
       Tuttifrutti.Prelude
       Tuttifrutti.Random
       Tuttifrutti.RequestId
+      Tuttifrutti.Sentry
       Tuttifrutti.Servant
       Tuttifrutti.Servant.Health
       Tuttifrutti.Servant.Redirect
@@ -119,6 +120,7 @@ library
     , random
     , range
     , rapid
+    , raven-haskell
     , regex-pcre
     , resource-pool
     , retry
@@ -180,6 +182,7 @@ test-suite spec
       Tuttifrutti.Log.Handle
       Tuttifrutti.Mail
       Tuttifrutti.Models.EmailAddress
+      Tuttifrutti.Models.PaperCode
       Tuttifrutti.Models.PersonaToken
       Tuttifrutti.Package
       Tuttifrutti.Persist
@@ -188,6 +191,7 @@ test-suite spec
       Tuttifrutti.Prelude
       Tuttifrutti.Random
       Tuttifrutti.RequestId
+      Tuttifrutti.Sentry
       Tuttifrutti.Servant
       Tuttifrutti.Servant.Health
       Tuttifrutti.Servant.Redirect
@@ -201,7 +205,7 @@ test-suite spec
   hs-source-dirs:
       test
       src
-  default-extensions: AutoDeriveTypeable BangPatterns BinaryLiterals ConstraintKinds DataKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveFunctor DeriveGeneric DeriveTraversable DerivingStrategies DoAndIfThenElse EmptyDataDecls ExistentialQuantification FlexibleContexts FlexibleInstances FunctionalDependencies GADTs GeneralizedNewtypeDeriving InstanceSigs KindSignatures LambdaCase MonadFailDesugaring MultiParamTypeClasses MultiWayIf NamedFieldPuns NoImplicitPrelude OverloadedStrings PartialTypeSignatures PatternGuards PolyKinds RankNTypes RecordWildCards ScopedTypeVariables StandaloneDeriving TupleSections TypeApplications TypeFamilies TypeOperators TypeSynonymInstances ViewPatterns
+  default-extensions: BangPatterns BinaryLiterals ConstraintKinds DataKinds DefaultSignatures DeriveDataTypeable DeriveFoldable DeriveFunctor DeriveGeneric DeriveTraversable DerivingStrategies DoAndIfThenElse EmptyDataDecls ExistentialQuantification FlexibleContexts FlexibleInstances FunctionalDependencies GADTs GeneralizedNewtypeDeriving InstanceSigs KindSignatures LambdaCase MultiParamTypeClasses MultiWayIf NamedFieldPuns NoImplicitPrelude OverloadedStrings PartialTypeSignatures PatternGuards PolyKinds RankNTypes RecordWildCards ScopedTypeVariables StandaloneDeriving TupleSections TypeApplications TypeFamilies TypeOperators TypeSynonymInstances ViewPatterns
   build-depends:
       HUnit
     , aeson
@@ -252,6 +256,7 @@ test-suite spec
     , random
     , range
     , rapid
+    , raven-haskell
     , regex-pcre
     , resource-pool
     , retry

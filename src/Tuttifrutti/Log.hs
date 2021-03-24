@@ -8,6 +8,7 @@ module Tuttifrutti.Log
   , logWarning, logWarning_
   , logError, logError_
   , logThrowError, logThrowError_
+  , interpolatedMessage
   ) where
 
 
@@ -25,7 +26,8 @@ import qualified Data.Time              as Time
 import qualified RIO.HashMap            as HashMap
 import qualified System.Log.FastLogger  as FastLogger
 
-import           Tuttifrutti.Log.Handle (Handle (..), LogEntry (..), LogSeverity (..))
+import           Tuttifrutti.Log.Handle (Handle (..), LogEntry (..),
+                                         LogSeverity (..))
 
 type MonadLog env m =
   ( MonadReader env m
