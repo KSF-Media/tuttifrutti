@@ -13,6 +13,9 @@ data PaperCode
   | ON
   | VN
   | HT
+  | JUNIOR
+  | FORUM
+  | LS
   | UnknownPaperCode Text
   deriving (Show, Eq, Generic, Read, Data, Ord)
 derivePersistField "PaperCode"
