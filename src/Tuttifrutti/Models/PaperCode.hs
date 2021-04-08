@@ -6,7 +6,6 @@ import           Tuttifrutti.Prelude
 import           Data.Aeson          (Value (String), withText)
 import qualified Data.Text           as Text
 import           Data.Unjson         (Unjson (..), unjsonAeson)
-import           Database.Persist.TH (derivePersistField)
 
 data PaperCode
   = HBL
@@ -18,7 +17,6 @@ data PaperCode
   | LS
   | UnknownPaperCode Text
   deriving (Show, Eq, Generic, Read, Data, Ord)
-derivePersistField "PaperCode"
 
 instance FromJSON PaperCode where
   parseJSON = withText "PaperCode" (pure . toPaperCode)
@@ -26,6 +24,16 @@ instance ToJSON PaperCode where
   toJSON = String . fromPaperCode
 instance Unjson PaperCode where
   unjsonDef = unjsonAeson
+
+instance PersistFieldSql PaperCode where
+  sqlType _ = SqlString
+
+instance PersistField PaperCode where
+  toPersistValue = PersistText . fromPaperCode
+  fromPersistValue =
+    \case
+      PersistText paperCodeText -> Right $ toPaperCode paperCodeText
+      _ -> Left "Expected Text from the database, but got something else"
 
 toPaperCode :: Text -> PaperCode
 toPaperCode paperCodeText =
