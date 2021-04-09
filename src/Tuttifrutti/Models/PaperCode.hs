@@ -13,6 +13,9 @@ data PaperCode
   | ON
   | VN
   | HT
+  | JUNIOR
+  | FORUM
+  | LS
   | UnknownPaperCode Text
   deriving (Show, Eq, Generic, Read, Data, Ord)
 derivePersistField "PaperCode"
@@ -27,13 +30,16 @@ instance Unjson PaperCode where
 toPaperCode :: Text -> PaperCode
 toPaperCode paperCodeText =
   case Text.toUpper paperCodeText of
-    "HBL" -> HBL
-    "ON"  -> ON
-    "ÖN"  -> ON
-    "ÖNY" -> ON
-    "VN"  -> VN
-    "HT"  -> HT
-    p     -> UnknownPaperCode p
+    "HBL"    -> HBL
+    "ON"     -> ON
+    "ÖN"     -> ON
+    "ÖNY"    -> ON
+    "VN"     -> VN
+    "HT"     -> HT
+    "JUNIOR" -> JUNIOR
+    "FORUM"  -> FORUM
+    "LS"     -> LS
+    p        -> UnknownPaperCode p
 
 fromPaperCode :: PaperCode -> Text
 fromPaperCode paperCode =
