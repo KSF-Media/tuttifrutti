@@ -3,10 +3,10 @@ module Tuttifrutti.Models.PaperCode where
 
 import           Tuttifrutti.Prelude
 
-import           Data.Aeson          (Value (String), withText)
-import qualified Data.Text           as Text
-import           Data.Unjson         (Unjson (..), unjsonAeson)
-import           Database.Persist.TH (derivePersistField)
+import           Data.Aeson             (Value (String), withText)
+import qualified Data.Text              as Text
+import           Data.Unjson            (Unjson (..), unjsonAeson)
+import           Database.Persist.Types (fromPersistValueText)
 
 data PaperCode
   = HBL
@@ -18,7 +18,6 @@ data PaperCode
   | LS
   | UnknownPaperCode Text
   deriving (Show, Eq, Generic, Read, Data, Ord)
-derivePersistField "PaperCode"
 
 instance FromJSON PaperCode where
   parseJSON = withText "PaperCode" (pure . toPaperCode)
@@ -26,6 +25,21 @@ instance ToJSON PaperCode where
   toJSON = String . fromPaperCode
 instance Unjson PaperCode where
   unjsonDef = unjsonAeson
+
+instance PersistFieldSql PaperCode where
+  sqlType _ = SqlString
+
+instance PersistField PaperCode where
+  toPersistValue = PersistText . fromPaperCode
+  fromPersistValue =
+    \case
+      PersistText paperCodeText -> Right $ toPaperCode paperCodeText
+      persistVal ->
+        Left $
+          "PaperCode decoding error! Expected Text from the database, but got something else: " <>
+          -- Some other database types are correctly decoded into `Text`, however
+          -- better to explicitly expect it to be `PersistText` always
+          (either id id $ fromPersistValueText persistVal)
 
 toPaperCode :: Text -> PaperCode
 toPaperCode paperCodeText =
