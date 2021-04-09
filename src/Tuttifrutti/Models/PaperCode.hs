@@ -3,9 +3,10 @@ module Tuttifrutti.Models.PaperCode where
 
 import           Tuttifrutti.Prelude
 
-import           Data.Aeson          (Value (String), withText)
-import qualified Data.Text           as Text
-import           Data.Unjson         (Unjson (..), unjsonAeson)
+import           Data.Aeson             (Value (String), withText)
+import qualified Data.Text              as Text
+import           Data.Unjson            (Unjson (..), unjsonAeson)
+import           Database.Persist.Types (fromPersistValueText)
 
 data PaperCode
   = HBL
@@ -33,7 +34,12 @@ instance PersistField PaperCode where
   fromPersistValue =
     \case
       PersistText paperCodeText -> Right $ toPaperCode paperCodeText
-      _ -> Left "Expected Text from the database, but got something else"
+      persistVal ->
+        Left $
+          "PaperCode decoding error! Expected Text from the database, but got something else: " <>
+          -- Some other database types are correctly decoded into `Text`, however
+          -- better to explicitly expect it to be `PersistText` always
+          (either id id $ fromPersistValueText persistVal)
 
 toPaperCode :: Text -> PaperCode
 toPaperCode paperCodeText =
