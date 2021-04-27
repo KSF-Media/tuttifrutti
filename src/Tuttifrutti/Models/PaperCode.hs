@@ -4,6 +4,7 @@ module Tuttifrutti.Models.PaperCode where
 import           Tuttifrutti.Prelude
 
 import           Data.Aeson             (Value (String), withText)
+import           Data.Swagger           (ToSchema, declareNamedSchema)
 import qualified Data.Text              as Text
 import           Data.Unjson            (Unjson (..), unjsonAeson)
 import           Database.Persist.Types (fromPersistValueText)
@@ -40,6 +41,9 @@ instance PersistField PaperCode where
           -- Some other database types are correctly decoded into `Text`, however
           -- better to explicitly expect it to be `PersistText` always
           (either id id $ fromPersistValueText persistVal)
+
+instance ToSchema PaperCode where
+  declareNamedSchema _ = declareNamedSchema (Proxy :: Proxy Text)
 
 toPaperCode :: Text -> PaperCode
 toPaperCode paperCodeText =
