@@ -6,6 +6,7 @@ import           Tuttifrutti.Prelude
 import           Data.Aeson             (Value (String), withText)
 import           Data.Swagger           (ToSchema, declareNamedSchema)
 import qualified Data.Text              as Text
+import           Data.Text.Encoding     (decodeUtf8)
 import           Data.Unjson            (Unjson (..), unjsonAeson)
 import           Database.Persist.Types (fromPersistValueText)
 
@@ -35,6 +36,8 @@ instance PersistField PaperCode where
   fromPersistValue =
     \case
       PersistText paperCodeText -> Right $ toPaperCode paperCodeText
+      PersistLiteral paperCode -> Right $ toPaperCode $ decodeUtf8 paperCode
+      PersistLiteralEscaped paperCode -> Right $ toPaperCode $ decodeUtf8 paperCode
       persistVal ->
         Left $
           "PaperCode decoding error! Expected Text from the database, but got something else: " <>
