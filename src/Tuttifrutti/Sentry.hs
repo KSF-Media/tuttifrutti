@@ -4,7 +4,6 @@ import           Tuttifrutti.Prelude
 
 import           Data.Aeson                             (Value, withObject,
                                                          (.:))
-import           Data.Aeson.Types                       (Pair)
 
 import qualified Data.Text                              as Text
 import qualified System.Log.Raven                       as Sentry
@@ -47,6 +46,3 @@ toSentryLevel = \case
   Log.LogInfo    -> Info
   Log.LogWarning -> Warning
   Log.LogError   -> Error
-
-toSentryParams :: [Pair] -> [(String, Value)]
-toSentryParams = map (first Text.unpack)
