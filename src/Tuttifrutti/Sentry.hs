@@ -38,6 +38,9 @@ initSentry dsn initialTags serviceName level logMessage extraTags = do
   sentry <- Sentry.initRaven dsn (Sentry.tags initialTags) Sentry.sendRecord Sentry.stderrFallback
   Sentry.register sentry serviceName level (Text.unpack logMessage) (Sentry.extra $ map (first Text.unpack) extraTags)
 
+disabledHandle :: SentryLevel -> Text -> [(Text, Value)] -> IO ()
+disabledHandle _ _ _ = pure ()
+
 toSentryLevel :: Log.LogSeverity -> SentryLevel
 toSentryLevel = \case
   Log.LogTrace   -> Debug
