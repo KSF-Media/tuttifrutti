@@ -80,13 +80,24 @@ newHandle tableName schema connectionPool = do
     }
 
 createTable :: forall k p v. TableName -> Schema k p v -> PG.Connection -> IO ()
-createTable tableName Schema{..} connection =
+createTable tableName Schema{..} connection = do
   void $ PG.execute connection
     ("CREATE TABLE IF NOT EXISTS ? (? ?, ? ?, ? ?)")
     ( tableName
     , fst schemaKey,      snd schemaKey
     , fst schemaPriority, snd schemaPriority
     , fst schemaValue,    snd schemaValue
+    )
+  void $ PG.execute connection
+    ( "DO $$ BEGIN IF NOT EXISTS \
+      \(SELECT constraint_name FROM information_schema.table_constraints \
+      \WHERE table_name = ? AND constraint_type = 'PRIMARY KEY') THEN \
+      \ALTER TABLE ? ADD PRIMARY KEY (?); \
+      \END IF; END $$"
+    )
+    ( PG.fromIdentifier $ (\(TableName t) -> t) tableName
+    , tableName
+    , fst schemaKey
     )
 
 alter
