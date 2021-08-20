@@ -122,8 +122,11 @@ alter tableName Schema{..} connection f k = do
     (Nothing, Nothing) -> pure ()
     (Nothing, Just (p, v)) -> do
       void $ PG.execute connection
-        "INSERT INTO ? VALUES (?, ?, ?)"
-        (tableName, k, p, v)
+        "INSERT INTO ? VALUES (?, ?, ?) \
+        \ON CONFLICT (?) DO UPDATE SET ? = EXCLUDED.?, ? = EXCLUDED.?"
+        ( tableName, k, p, v
+        , fst schemaKey, fst schemaValue, fst schemaValue, fst schemaPriority, fst schemaPriority
+        )
       pure ()
     (Just (oldP, oldV), Just (newP, newV))
       | oldP == newP, oldV == newV -> pure ()
