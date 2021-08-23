@@ -71,6 +71,10 @@ newHandle tableName schema connectionPool = do
         liftIO
           $ Pool.withResource connectionPool
           $ \connection -> alter tableName schema connection f k
+    , Storage.set = Just $ \v k ->
+        liftIO
+          $ Pool.withResource connectionPool
+          $ \connection -> insert tableName schema connection v k
     , Storage.dropRange = \range ->
         void
           $ liftIO
@@ -112,7 +116,7 @@ alter
   -> (Maybe (p, v) -> (a, Maybe (p, v)))
   -> k
   -> IO a
-alter tableName Schema{..} connection f k = do
+alter tableName schema@Schema{..} connection f k = do
   existing :: Maybe (p, v) <- fmap (\(_, p, v) -> (p, v)) . headMaybe <$> do
     PG.query @(TableName, PG.Identifier, k) @(k, p, v) connection
       "SELECT * FROM ? WHERE ? = ?"
@@ -120,14 +124,7 @@ alter tableName Schema{..} connection f k = do
   let (a, new) = f existing
   a <$ case (existing, new) of
     (Nothing, Nothing) -> pure ()
-    (Nothing, Just (p, v)) -> do
-      void $ PG.execute connection
-        "INSERT INTO ? VALUES (?, ?, ?) \
-        \ON CONFLICT (?) DO UPDATE SET ? = EXCLUDED.?, ? = EXCLUDED.?"
-        ( tableName, k, p, v
-        , fst schemaKey, fst schemaValue, fst schemaValue, fst schemaPriority, fst schemaPriority
-        )
-      pure ()
+    (Nothing, Just (p, v)) -> upsert tableName schema connection k p v
     (Just (oldP, oldV), Just (newP, newV))
       | oldP == newP, oldV == newV -> pure ()
       | otherwise -> do
@@ -140,6 +137,46 @@ alter tableName Schema{..} connection f k = do
             )
     (Just _, Nothing) -> do
       void $ PG.execute connection "DELETE FROM ? WHERE ? = ?" (tableName, fst schemaKey, k)
+
+insert
+  :: forall k p v
+   . ( PG.FromField k, PG.FromField p, PG.FromField v
+     , PG.ToField k, PG.ToField p, PG.ToField v
+     , Eq p, Eq v
+     )
+  => TableName
+  -> Schema k p v
+  -> PG.Connection
+  -> Maybe (p, v)
+  -> k
+  -> IO ()
+insert tableName Schema{..} connection Nothing k = do
+  void $ PG.execute connection "DELETE FROM ? WHERE ? = ?" (tableName, fst schemaKey, k)
+  pure ()
+insert tableName schema connection (Just (p, v)) k =
+  upsert tableName schema connection k p v
+
+upsert
+  :: forall k p v
+   . ( PG.FromField k, PG.FromField p, PG.FromField v
+     , PG.ToField k, PG.ToField p, PG.ToField v
+     , Eq p, Eq v
+     )
+  => TableName
+  -> Schema k p v
+  -> PG.Connection
+  -> k
+  -> p
+  -> v
+  -> IO ()
+upsert tableName Schema{..} connection k p v = do
+  void $ PG.execute connection
+    "INSERT INTO ? VALUES (?, ?, ?) \
+    \ON CONFLICT (?) DO UPDATE SET ? = EXCLUDED.?, ? = EXCLUDED.?"
+    ( tableName, k, p, v
+    , fst schemaKey, fst schemaValue, fst schemaValue, fst schemaPriority, fst schemaPriority
+    )
+  pure ()
 
 dropRange
   :: forall k p v
