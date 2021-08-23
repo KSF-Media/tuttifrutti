@@ -32,6 +32,7 @@ newHandle capacity = do
   pure $ Storage.Handle
     { Storage.alter = \f k ->
         stateTVar var (alter f k)
+    , Storage.set = Nothing
     , Storage.dropRange = \p ->
         stateTVar var $ ((),) . dropRange p
     }
