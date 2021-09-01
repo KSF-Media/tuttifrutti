@@ -1,4 +1,4 @@
-image: fpco/stack-build:lts-17.15
+image: fpco/stack-build:lts-18.8
 services:
   - postgres:latest
 variables:
