@@ -48,6 +48,8 @@ instance PersistField PaperCode where
 instance ToSchema PaperCode where
   declareNamedSchema _ = declareNamedSchema (Proxy :: Proxy Text)
 
+instance ToParamSchema PaperCode
+
 toPaperCode :: Text -> PaperCode
 toPaperCode paperCodeText =
   case Text.toUpper paperCodeText of
