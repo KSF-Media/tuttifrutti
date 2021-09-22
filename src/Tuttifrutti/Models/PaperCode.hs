@@ -3,12 +3,16 @@ module Tuttifrutti.Models.PaperCode where
 
 import           Tuttifrutti.Prelude
 
-import           Data.Aeson             (Value (String), withText)
-import           Data.Swagger           (ToSchema, declareNamedSchema)
-import qualified Data.Text              as Text
-import           Data.Text.Encoding     (decodeUtf8)
-import           Data.Unjson            (Unjson (..), unjsonAeson)
-import           Database.Persist.Types (fromPersistValueText)
+import           Data.Aeson                        (Value (String), withText)
+import           Data.Swagger                      (SwaggerType (..), ToSchema,
+                                                    declareNamedSchema, enum_,
+                                                    type_)
+import           Data.Swagger.Internal.ParamSchema (ToParamSchema,
+                                                    toParamSchema)
+import qualified Data.Text                         as Text
+import           Data.Text.Encoding                (decodeUtf8)
+import           Data.Unjson                       (Unjson (..), unjsonAeson)
+import           Database.Persist.Types            (fromPersistValueText)
 
 data PaperCode
   = HBL
@@ -48,7 +52,10 @@ instance PersistField PaperCode where
 instance ToSchema PaperCode where
   declareNamedSchema _ = declareNamedSchema (Proxy :: Proxy Text)
 
-instance ToParamSchema PaperCode
+instance ToParamSchema PaperCode where
+  toParamSchema _ = mempty
+     & type_ ?~ SwaggerString
+     & enum_ ?~ (map toJSON [ HBL, ON, VN, HT, JUNIOR, FORUM, LS ])
 
 toPaperCode :: Text -> PaperCode
 toPaperCode paperCodeText =
