@@ -13,6 +13,8 @@ import qualified Data.Text                         as Text
 import           Data.Text.Encoding                (decodeUtf8)
 import           Data.Unjson                       (Unjson (..), unjsonAeson)
 import           Database.Persist.Types            (fromPersistValueText)
+import           Web.HttpApiData                   (FromHttpApiData (..))
+
 
 data PaperCode
   = HBL
@@ -56,6 +58,9 @@ instance ToParamSchema PaperCode where
   toParamSchema _ = mempty
      & type_ ?~ SwaggerString
      & enum_ ?~ (map toJSON [ HBL, ON, VN, HT, JUNIOR, FORUM, LS ])
+
+instance FromHttpApiData PaperCode where
+  parseQueryParam = Right . toPaperCode
 
 toPaperCode :: Text -> PaperCode
 toPaperCode paperCodeText =
