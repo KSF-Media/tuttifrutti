@@ -5,8 +5,7 @@ import           Tuttifrutti.Prelude
 
 import qualified Network.Wai            as Wai
 
-import           Servant                (Handler (..), HasServer, ServerT, hoistServer, runHandler,
-                                         serve)
+import           Servant
 
 import qualified Tuttifrutti.Http       as Http
 import qualified Tuttifrutti.Log.Handle as Log
@@ -29,26 +28,49 @@ fruttyRioApp
   -> Wai.Application
 fruttyRioApp env server =
   requestLogger env $ \requestId ->
-    rioAppWith (Proxy @api) (withXRequestId requestId) env server
+    rioAppWith (Proxy @api) EmptyContext (withXRequestId requestId) env server
+
+fruttyRioAppWithContext
+  :: forall (api :: *) (context :: [*]) env.
+     ( HasServer api context
+     , HasContextEntry (context .++ DefaultErrorFormatters) ErrorFormatters
+     , Has Http.Handle env
+     , Has Log.Handle  env
+     )
+  => env
+  -> Context context
+  -> ServerT api (RIO env)
+  -> Wai.Application
+fruttyRioAppWithContext env context server =
+  requestLogger env $ \requestId ->
+    rioAppWith (Proxy @api) context (withXRequestId requestId) env server
 
 -- | Serve an app with given transformations.
 rioAppWith
-  :: forall (api :: *) env m. HasServer api '[]
+  :: forall (api :: *) (context :: [*]) env m.
+     ( HasServer api context
+     , HasContextEntry (context .++ DefaultErrorFormatters) ErrorFormatters
+     )
   => Proxy api
+  -> Context context
   -> (forall a. m a -> RIO env a)
   -> env
   -> ServerT api m
   -> Wai.Application
-rioAppWith api f env = rioApp api env . hoistServer api f
+rioAppWith api context f env = rioApp api context env . hoistServerWithContext api (Proxy @context) f
 
 -- | Serve an app that lives in RIO monad.
 rioApp
-  :: forall (api :: *) env. HasServer api '[]
+  :: forall (api :: *) (context :: [*]) env.
+     ( HasServer api context
+     , HasContextEntry (context .++ DefaultErrorFormatters) ErrorFormatters
+     )
   => Proxy api
+  -> Context context
   -> env
   -> ServerT api (RIO env)
   -> Wai.Application
-rioApp api env = serve api . hoistServer api (rioHandlerNat env)
+rioApp api context env = serveWithContext api context . hoistServerWithContext api (Proxy @context) (rioHandlerNat env)
 
 rioHandlerNat :: env -> (forall a. RIO env a -> Handler a)
 rioHandlerNat env = Handler . ExceptT . try . runRIO env
