@@ -46,6 +46,7 @@ library
       Tuttifrutti.Log
       Tuttifrutti.Log.Handle
       Tuttifrutti.Mail
+      Tuttifrutti.Models.BasicAuth
       Tuttifrutti.Models.EmailAddress
       Tuttifrutti.Models.PaperCode
       Tuttifrutti.Models.PersonaToken
@@ -118,6 +119,7 @@ library
     , aeson-pretty
     , attoparsec
     , base >=4.7 && <5
+    , base64-bytestring
     , bytestring
     , case-insensitive
     , conduit
