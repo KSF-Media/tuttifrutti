@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1f8de7cb96c0d705a37f031a42b5aef7e6f92fdb541e2c71c868859df05febcc
+-- hash: 57ca92844a1906c8732008ca1915466495069f7e9efbffa65b95ab6b6a92b34f
 
 name:           tuttifrutti
 version:        0.1.0.0
@@ -46,6 +46,7 @@ library
       Tuttifrutti.Log
       Tuttifrutti.Log.Handle
       Tuttifrutti.Mail
+      Tuttifrutti.Mailchimp.Transactional
       Tuttifrutti.Models.BasicAuth
       Tuttifrutti.Models.EmailAddress
       Tuttifrutti.Models.PaperCode
@@ -141,6 +142,7 @@ library
     , hspec-expectations-lifted
     , http-api-data
     , http-client
+    , http-client-tls
     , http-client-vcr
     , http-conduit
     , http-types
@@ -223,6 +225,8 @@ test-suite spec
       Tuttifrutti.Log
       Tuttifrutti.Log.Handle
       Tuttifrutti.Mail
+      Tuttifrutti.Mailchimp.Transactional
+      Tuttifrutti.Models.BasicAuth
       Tuttifrutti.Models.EmailAddress
       Tuttifrutti.Models.PaperCode
       Tuttifrutti.Models.PersonaToken
@@ -295,6 +299,7 @@ test-suite spec
     , aeson-pretty
     , attoparsec
     , base >=4.7 && <5
+    , base64-bytestring
     , bytestring
     , case-insensitive
     , conduit
@@ -317,6 +322,7 @@ test-suite spec
     , hspec-expectations-lifted
     , http-api-data
     , http-client
+    , http-client-tls
     , http-client-vcr
     , http-conduit
     , http-types

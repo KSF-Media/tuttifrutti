@@ -18,6 +18,7 @@ dependencies:
 - time
 - text
 - bytestring
+- base64-bytestring
 - unliftio
 - random
 - containers
@@ -101,6 +102,7 @@ dependencies:
 - http-conduit
 - data-vcr
 - http-client-vcr
+- http-client-tls
 - mime-mail
 - smtp-mail
 - store
