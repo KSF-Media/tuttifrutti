@@ -1,4 +1,5 @@
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE DeriveAnyClass #-}
 module Tuttifrutti.Models.PaperCode where
 
 import           Tuttifrutti.Prelude
@@ -25,7 +26,7 @@ data PaperCode
   | FORUM
   | LS
   | UnknownPaperCode Text
-  deriving (Show, Eq, Generic, Read, Data, Ord)
+  deriving (Show, Eq, Generic, Read, Data, Ord, Hashable)
 
 instance FromJSON PaperCode where
   parseJSON = withText "PaperCode" (pure . toPaperCode)
