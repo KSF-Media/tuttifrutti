@@ -31,6 +31,21 @@ fruttyRioApp env server =
   requestLogger env $ \requestId ->
     rioAppWith (Proxy @api) (withXRequestId requestId) env server
 
+-- | Like fruttyRioApp, but allows passing more transformations.
+fruttyRioAppWithTransformations
+  :: forall (api :: *) env.
+     ( HasServer api '[]
+     , Has Http.Handle env
+     , Has Log.Handle  env
+     )
+  => env
+  -> (forall a. RIO env a -> RIO env a)
+  -> ServerT api (RIO env)
+  -> Wai.Application
+fruttyRioAppWithTransformations env f server =
+  requestLogger env $ \requestId ->
+    rioAppWith (Proxy @api) (f . (withXRequestId requestId)) env server
+
 -- | Serve an app with given transformations.
 rioAppWith
   :: forall (api :: *) env m. HasServer api '[]
