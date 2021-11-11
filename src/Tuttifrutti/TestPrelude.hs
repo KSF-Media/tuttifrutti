@@ -16,6 +16,7 @@ import qualified Data.Has                       as Has
 import qualified Data.Vcr                       as Vcr
 import qualified Data.Text                      as Text
 import qualified Data.Text.Encoding             as Text
+import           Servant.Server                 (ServerError (..))
 
 import qualified Tuttifrutti.Http               as Http
 import qualified Tuttifrutti.Http.Handle        as Http
@@ -128,3 +129,15 @@ goldenTest name path action = Spec
         changes       ->
           Just $ Text.unpack $ Text.decodeUtf8 $ LByteString.toStrict $ Json.encodePretty changes
     updateCorrectValue = LByteString.writeFile path . Json.encodePretty
+
+-- | Test expectation that passes when a given action throws an ServantError with given HTTP code
+throwsServantError :: (HasCallStack, MonadUnliftIO m) => m a -> Int -> m ()
+action `throwsServantError` httpCode = do
+  try action >>= \case
+    Right _ -> expectationFailure $ "did not get the expected ServantError with code " <> show httpCode
+    Left (ServerError{ errHTTPCode }) | errHTTPCode == httpCode -> pure ()
+    Left err -> expectationFailure
+      $ "did not get the expected ServantError with code "
+      <> show httpCode
+      <> ", but got this instead: "
+      <> show err
