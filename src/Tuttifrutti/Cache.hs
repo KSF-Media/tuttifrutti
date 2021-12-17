@@ -66,3 +66,14 @@ lookupAfter k threshold = do
     Storage.dropLowerThan handleStorage threshold
     Storage.lookupValid handleStorage k $ \p v ->
       v <$ guard (p >= threshold)
+
+tryLookupAfter
+  :: forall id k v env m e
+   . ( MonadCache env m id k v
+     , MonadUnliftIO m
+     , Exception e
+     )
+  => k -- ^ key we are interested in
+  -> UTCTime -- ^ everything prior is considered expired and removed
+  -> m (Either e (Maybe v))
+tryLookupAfter k t = try $ lookupAfter @id k t
