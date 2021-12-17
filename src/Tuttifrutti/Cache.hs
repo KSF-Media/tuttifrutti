@@ -55,19 +55,6 @@ lookupValid key validate = do
 -- | Lookup a value that must be fresher than the given timestamp.
 --   As a side effect all the values that aren't that fresh are removed.
 lookupAfter
-  :: forall id k v env m
-   . MonadCache env m id k v
-  => k -- ^ key we are interested in
-  -> UTCTime -- ^ everything prior is considered expired and removed
-  -> m (Maybe v)
-lookupAfter k threshold = do
-  Handle{..} :: Handle id k v <- asks Has.getter
-  liftIO $ do
-    Storage.dropLowerThan handleStorage threshold
-    Storage.lookupValid handleStorage k $ \p v ->
-      v <$ guard (p >= threshold)
-
-tryLookupAfter
   :: forall id k v env m e
    . ( MonadCache env m id k v
      , MonadUnliftIO m
@@ -76,4 +63,9 @@ tryLookupAfter
   => k -- ^ key we are interested in
   -> UTCTime -- ^ everything prior is considered expired and removed
   -> m (Either e (Maybe v))
-tryLookupAfter k t = try $ lookupAfter @id k t
+lookupAfter k threshold = try $ do
+  Handle{..} :: Handle id k v <- asks Has.getter
+  liftIO $ do
+    Storage.dropLowerThan handleStorage threshold
+    Storage.lookupValid handleStorage k $ \p v ->
+      v <$ guard (p >= threshold)
