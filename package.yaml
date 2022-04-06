@@ -52,6 +52,7 @@ dependencies:
 - regex-pcre
 - unjson
 - template
+- binary
 # Development
 - rapid
 # Testing

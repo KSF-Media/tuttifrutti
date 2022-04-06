@@ -5,6 +5,7 @@ module Tuttifrutti.Models.PaperCode where
 import           Tuttifrutti.Prelude
 
 import           Data.Aeson                        (Value (String), withText)
+import           Data.Binary                       (Binary)
 import           Data.Swagger                      (SwaggerType (..), ToSchema,
                                                     declareNamedSchema, enum_,
                                                     type_)
@@ -26,7 +27,7 @@ data PaperCode
   | FORUM
   | LS
   | UnknownPaperCode Text
-  deriving (Show, Eq, Generic, Read, Data, Ord, Hashable)
+  deriving (Show, Eq, Generic, Read, Data, Ord, Hashable, NFData, Binary)
 
 instance FromJSON PaperCode where
   parseJSON = withText "PaperCode" (pure . toPaperCode)
