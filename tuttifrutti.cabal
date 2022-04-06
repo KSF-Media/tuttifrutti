@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 57ca92844a1906c8732008ca1915466495069f7e9efbffa65b95ab6b6a92b34f
+-- hash: 44273090340bd8038b4cc5fb7e14ed023023e6f5fcdb574217a1b6799a14b27e
 
 name:           tuttifrutti
 version:        0.1.0.0
@@ -121,6 +121,7 @@ library
     , attoparsec
     , base >=4.7 && <5
     , base64-bytestring
+    , binary
     , bytestring
     , case-insensitive
     , conduit
@@ -300,6 +301,7 @@ test-suite spec
     , attoparsec
     , base >=4.7 && <5
     , base64-bytestring
+    , binary
     , bytestring
     , case-insensitive
     , conduit
