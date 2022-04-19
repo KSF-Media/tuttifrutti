@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: de3507f4e0ec2260e00969315d6a5ac0d10ca549f793fe9f4412fff50ffdacfd
+-- hash: 44273090340bd8038b4cc5fb7e14ed023023e6f5fcdb574217a1b6799a14b27e
 
 name:           tuttifrutti
 version:        0.1.0.0
@@ -116,6 +116,7 @@ library
   ghc-options: -Wall
   build-depends:
       aeson
+    , aeson-diff
     , aeson-pretty
     , attoparsec
     , base >=4.7 && <5
@@ -295,6 +296,7 @@ test-suite spec
   build-depends:
       HUnit
     , aeson
+    , aeson-diff
     , aeson-pretty
     , attoparsec
     , base >=4.7 && <5

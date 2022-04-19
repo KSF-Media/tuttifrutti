@@ -5,8 +5,8 @@ import           Tuttifrutti.Prelude
 
 import qualified Network.Wai            as Wai
 
-import           Servant                (Handler (..), HasServer, ServerT, hoistServer, runHandler,
-                                         serve)
+import           Servant                (Handler (..), HasServer, ServerT,
+                                         hoistServer, runHandler, serve)
 
 import qualified Tuttifrutti.Http       as Http
 import qualified Tuttifrutti.Log.Handle as Log
@@ -19,7 +19,7 @@ import           Tuttifrutti.Wai        (requestLogger, withXRequestId)
 --       app env = fruttyRioApp @Api env server
 --
 fruttyRioApp
-  :: forall (api :: *) env.
+  :: forall (api :: Type) env.
      ( HasServer api '[]
      , Has Http.Handle env
      , Has Log.Handle  env
@@ -33,7 +33,7 @@ fruttyRioApp env server =
 
 -- | Serve an app with given transformations.
 rioAppWith
-  :: forall (api :: *) env m. HasServer api '[]
+  :: forall (api :: Type) env m. HasServer api '[]
   => Proxy api
   -> (forall a. m a -> RIO env a)
   -> env
@@ -43,7 +43,7 @@ rioAppWith api f env = rioApp api env . hoistServer api f
 
 -- | Serve an app that lives in RIO monad.
 rioApp
-  :: forall (api :: *) env. HasServer api '[]
+  :: forall (api :: Type) env. HasServer api '[]
   => Proxy api
   -> env
   -> ServerT api (RIO env)

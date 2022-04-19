@@ -14,7 +14,7 @@ extra-deps:
     commit: 7531ee83759362af7a74aa2877f02478976c4748
     subdirs:
       - raven-haskell
-  - aeson-diff-1.1.0.9@sha256:f3b9f31385cd6b2807d693d5d2abb11d8e101900f73b11b38884042202d01f19,3913
+  - aeson-diff-1.1.0.12
   - extensible-0.8.3@sha256:2886978a81e9c2ff29a93caf7ae847a8b7724dc4ee22381c5d29ca8318c686c4,2955
   - template-0.2.0.10@sha256:f822de4d34c45bc84b33a61bc112c15fedee6fa6dc414c62b10456395a868f85,987
   - unjson-0.15.4

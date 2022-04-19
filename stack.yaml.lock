@@ -68,12 +68,12 @@ packages:
     git: https://gitlab.com/vapaj/raven-haskell.git
     commit: 7531ee83759362af7a74aa2877f02478976c4748
 - completed:
-    hackage: aeson-diff-1.1.0.9@sha256:f3b9f31385cd6b2807d693d5d2abb11d8e101900f73b11b38884042202d01f19,3913
+    hackage: aeson-diff-1.1.0.12@sha256:3a952f40c02afba1483b55b4e20101f52eca01f33857cbb363d0737b7d30fc31,3356
     pantry-tree:
-      size: 5143
-      sha256: b42d5ce8b0d4d8b1f7ea2d6ad336156716f97eb053e1189cd527d6c8806a1bd4
+      size: 5086
+      sha256: d44f3590e5e378a9ee34170028778150c561ce7c60a79155d90ec1a39cf88aac
   original:
-    hackage: aeson-diff-1.1.0.9@sha256:f3b9f31385cd6b2807d693d5d2abb11d8e101900f73b11b38884042202d01f19,3913
+    hackage: aeson-diff-1.1.0.12
 - completed:
     hackage: extensible-0.8.3@sha256:2886978a81e9c2ff29a93caf7ae847a8b7724dc4ee22381c5d29ca8318c686c4,2955
     pantry-tree:

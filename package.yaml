@@ -71,6 +71,7 @@ dependencies:
 - raven-haskell
 # Serialization formats
 - aeson
+- aeson-diff
 - aeson-pretty
 - yaml
 # Servant things
