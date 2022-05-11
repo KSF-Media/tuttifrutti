@@ -3,7 +3,7 @@ packages:
   - .
 extra-deps:
   - git: https://github.com/KSF-Media/haskell-vcr
-    commit: d39abc470d5f181f4ca7cb88193d51b7587f42c1
+    commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
     subdirs:
       - data-vcr
       - tasty-vcr

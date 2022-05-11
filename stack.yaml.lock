@@ -12,11 +12,11 @@ packages:
     pantry-tree:
       size: 257
       sha256: 5cff90061e6efff660b3a9732573f52d1f06945c6cefd65ae1acdd6b168a6e41
-    commit: d39abc470d5f181f4ca7cb88193d51b7587f42c1
+    commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
   original:
     subdir: data-vcr
     git: https://github.com/KSF-Media/haskell-vcr
-    commit: d39abc470d5f181f4ca7cb88193d51b7587f42c1
+    commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
 - completed:
     subdir: tasty-vcr
     name: tasty-vcr
@@ -25,11 +25,11 @@ packages:
     pantry-tree:
       size: 331
       sha256: 1f0bbb6763f95c2fc6e55093b43408d266eb17647dc84a3e0e7b2142a7342096
-    commit: d39abc470d5f181f4ca7cb88193d51b7587f42c1
+    commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
   original:
     subdir: tasty-vcr
     git: https://github.com/KSF-Media/haskell-vcr
-    commit: d39abc470d5f181f4ca7cb88193d51b7587f42c1
+    commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
 - completed:
     subdir: http-client-vcr
     name: http-client-vcr
@@ -38,11 +38,11 @@ packages:
     pantry-tree:
       size: 277
       sha256: 2797f65a3d6caa9e58fc9ba182ca91712e2a3db298bebbed70b6bce0315d40d6
-    commit: d39abc470d5f181f4ca7cb88193d51b7587f42c1
+    commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
   original:
     subdir: http-client-vcr
     git: https://github.com/KSF-Media/haskell-vcr
-    commit: d39abc470d5f181f4ca7cb88193d51b7587f42c1
+    commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
 - completed:
     name: rapid
     version: 0.1.4
