@@ -15,6 +15,8 @@ module Tuttifrutti.Log
 import           Tuttifrutti.Prelude
 
 import qualified Data.Aeson             as Json
+import qualified Data.Aeson.Key         as Key
+import qualified Data.Aeson.KeyMap      as KeyMap
 import qualified Data.Aeson.Types       as Json
 import qualified Data.ByteString.Lazy   as LByteString
 import qualified Data.Has               as Has
@@ -23,7 +25,6 @@ import qualified Data.Text.Encoding     as Text
 import qualified Data.Text.Lazy         as LText
 import qualified Data.Text.Template     as Template
 import qualified Data.Time              as Time
-import qualified RIO.HashMap            as HashMap
 import qualified System.Log.FastLogger  as FastLogger
 
 import           Tuttifrutti.Log.Handle (Handle (..), LogEntry (..),
@@ -90,7 +91,7 @@ interpolatedMessage templateText payload =
 lookupJsonPath :: [Text] -> Json.Value -> Maybe Text
 lookupJsonPath [] (Json.String s) = Just s
 lookupJsonPath (var:path) (Json.Object o) =
-  HashMap.lookup var o >>= lookupJsonPath path
+  KeyMap.lookup (Key.fromText var) o >>= lookupJsonPath path
 lookupJsonPath _path json =
   Just $ Text.decodeUtf8 $ LByteString.toStrict $ Json.encode json
 

@@ -14,10 +14,12 @@ import           Tuttifrutti.Prelude
 
 import           Control.Lens              (at)
 import qualified Data.Aeson                as Json
-import           Data.Extensible           (type (>:), Assoc (..), Forall,
-                                            KeyOf, KeyTargetAre,
-                                            Membership (..), Record, TargetOf,
-                                            emptyRecord, henumerateFor, (<:),
+import qualified Data.Aeson.Key            as Key
+import qualified Data.Aeson.KeyMap         as KeyMap
+import           Data.Extensible           (Assoc (..), Forall, KeyOf,
+                                            KeyTargetAre, Membership (..),
+                                            Record, TargetOf, emptyRecord,
+                                            henumerateFor, type (>:), (<:),
                                             (@=))
 import qualified Data.Swagger              as Swagger
 import           Data.Swagger.Declare
@@ -102,10 +104,10 @@ instance
                  <$> Swagger.declareSchemaRef @value Proxy
 
 instance KnownSymbol tag => Json.ToJSON (ErrorResponse tag) where
-  toJSON ErrorResponse{..} = Json.Object $ fromList
+  toJSON ErrorResponse{..} = Json.Object $ KeyMap.fromList
     [ "http_code" .= errorResponseHttpCode
     , "http_status" .= errorResponseHttpStatus
-    , tag .= errorResponseExtraFields
+    , (Key.fromText tag) .= errorResponseExtraFields
     ]
     where
       tag = Text.pack $ symbolVal @tag Proxy
@@ -150,7 +152,7 @@ class
         errorResponseDescription = (errorDescription @httpCode @tag Proxy)
         errorResponseExtraFields =
           case toJSON fields of
-            Json.Object o -> o & at "description" ?~ Json.String errorResponseDescription
+            Json.Object (KeyMap.toMap -> o) -> o & at "description" ?~ Json.String errorResponseDescription & KeyMap.fromMap
             _             -> error "not an object, impossible"
 
 declareErrorResponse

@@ -11,21 +11,21 @@ module Tuttifrutti.Json
 import           Tuttifrutti.Prelude
 
 import qualified Data.Aeson          as Json
+import qualified Data.Aeson.KeyMap   as KeyMap
 import qualified Data.Char           as Char
 import           Data.Constraint
 import           Data.Extensible
-import qualified Data.HashMap.Lazy   as HashMap
 import qualified Data.List           as List
 import qualified Data.Text           as Text
 
 -- | Generically convert a record to a json object.
 toJsonRecord :: forall xs. Forall (KeyTargetAre KnownSymbol ToJSON) xs => Record xs -> Json.Value
 toJsonRecord =
-  Json.Object . HashMap.fromList . flip appEndo [] . hfoldMap getConst
+  Json.Object . KeyMap.fromList . flip appEndo [] . hfoldMap getConst
     . hzipWith
-        (\(Comp Dict) v -> Const $ Endo
+        (\(Compose Dict) v -> Const $ Endo
           ((fromString $ symbolVal $ proxyKeyOf v, toJSON $ getField v):))
-        (library :: xs :& Comp Dict (KeyTargetAre KnownSymbol ToJSON))
+        (library :: xs :& Compose Dict (KeyTargetAre KnownSymbol ToJSON))
 
 -- | Go over the 'Json.Value' and turn all the @Json.String ""@ into 'Json.Null'.
 nullifyEmptyStrings :: Json.Value -> Json.Value
@@ -43,10 +43,10 @@ stripStrings v                 = v
 
 -- | Go over the 'Json.Value' and turn all the @Json.Array []@ into 'Json.Null'.
 nullifyEmptyArrays :: Json.Value -> Json.Value
-nullifyEmptyArrays (Json.Array []) = Json.Null
-nullifyEmptyArrays (Json.Array arr) = Json.Array (nullifyEmptyArrays <$> arr)
+nullifyEmptyArrays (Json.Array [])   = Json.Null
+nullifyEmptyArrays (Json.Array arr)  = Json.Array (nullifyEmptyArrays <$> arr)
 nullifyEmptyArrays (Json.Object obj) = Json.Object (nullifyEmptyArrays <$> obj)
-nullifyEmptyArrays v = v
+nullifyEmptyArrays v                 = v
 
 stripPrefix :: String -> Json.Options
 stripPrefix prefix =

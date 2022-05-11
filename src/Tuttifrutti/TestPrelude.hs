@@ -13,9 +13,9 @@ import           Data.Aeson.Diff                as Json
 import           Data.Aeson.Encode.Pretty       as Json
 import qualified Data.ByteString.Lazy           as LByteString
 import qualified Data.Has                       as Has
-import qualified Data.Vcr                       as Vcr
 import qualified Data.Text                      as Text
 import qualified Data.Text.Encoding             as Text
+import qualified Data.Vcr                       as Vcr
 import           Servant.Server                 (ServerError (..))
 
 import qualified Tuttifrutti.Http               as Http
@@ -24,10 +24,11 @@ import           Tuttifrutti.Log                as X (MonadLog)
 import qualified Tuttifrutti.Time.Handle        as Time
 
 import           Test.Hspec.Expectations.Lifted as X
-import           Test.Tasty                     as X (TestName, TestTree, testGroup)
+import           Test.Tasty                     as X (TestName, TestTree,
+                                                      testGroup)
 import qualified Test.Tasty                     as Tasty
-import           Test.Tasty.ExpectedFailure     (expectFail, expectFailBecause, ignoreTest,
-                                                 ignoreTestBecause)
+import           Test.Tasty.ExpectedFailure     (expectFail, expectFailBecause,
+                                                 ignoreTest, ignoreTestBecause)
 import qualified Test.Tasty.Golden.Advanced     as Tasty
 import           Test.Tasty.HUnit               as Tasty.HUnit
 import qualified Test.Tasty.Ingredients.Vcr     as Vcr

@@ -12,6 +12,7 @@ import           Tuttifrutti.Prelude
 
 import           Control.Lens                (over)
 import qualified Data.Aeson                  as Json
+import qualified Data.Aeson.Key              as Key
 import qualified Data.ByteString.Lazy        as LByteString
 import qualified Data.CaseInsensitive        as CaseInsensitive
 import qualified Data.Has                    as Has
@@ -19,7 +20,8 @@ import qualified Data.Text.Encoding          as Text
 import qualified Data.Text.Encoding.Error    as Text.Error
 import qualified Data.Time.Clock             as Time
 import qualified Data.Vcr                    as Vcr
-import           Network.HTTP.Client         (BodyReader, responseClose, responseOpen)
+import           Network.HTTP.Client         (BodyReader, responseClose,
+                                              responseOpen)
 import qualified Network.HTTP.Client         as Http
 import           Network.HTTP.Client.Conduit (Request, Response)
 import qualified Network.HTTP.Client.Vcr     as Vcr
@@ -140,5 +142,4 @@ statusObject (Http.Status code message) = object
 -- | Json-encode http headers, useful for logging.
 headersObject :: [Http.Header] -> Json.Value
 headersObject =
-  object . map (\(k,v) -> Text.decodeUtf8 (CaseInsensitive.original k) .= Text.decodeUtf8 v)
-
+  object . map (\(k,v) -> Key.fromText (Text.decodeUtf8 (CaseInsensitive.original k)) .= Text.decodeUtf8 v)

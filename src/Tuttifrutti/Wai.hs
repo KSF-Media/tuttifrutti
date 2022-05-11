@@ -2,6 +2,7 @@ module Tuttifrutti.Wai where
 
 import           Tuttifrutti.Prelude
 
+import qualified Data.Aeson.Key              as Key
 import qualified Data.Aeson.Types            as Json
 import qualified Data.ByteString.Char8       as ByteString8
 import qualified Data.ByteString.Lazy        as LByteString
@@ -49,8 +50,8 @@ requestToJSON request =
     , "headers" .= object (headerJson <$> Wai.requestHeaders request)
     ]
   where
-    queryItemJson (name, mValue) = decodeUtf8 name .= fmap decodeUtf8 mValue
-    headerJson (name, value) = decodeUtf8 (CI.original name) .= decodeUtf8 value
+    queryItemJson (name, mValue) = Key.fromText (decodeUtf8 name) .= fmap decodeUtf8 mValue
+    headerJson (name, value) = Key.fromText (decodeUtf8 (CI.original name)) .= decodeUtf8 value
 
 sockAddrToJSON :: Socket.SockAddr -> Json.Value
 sockAddrToJSON = object . \case
