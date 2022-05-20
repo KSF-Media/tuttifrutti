@@ -75,6 +75,37 @@ onLeft f = either f pure
 throwLeft :: (Exception e, MonadThrow m) => m (Either e b) -> m b
 throwLeft m = m >>= onLeft throwM
 
+-- | Get first element of a list, if it exists.
+--
+-- ==== __Examples__
+--
+-- Basic usage:
+--
+-- >>> safeHead [1, 2, 3]
+-- Just 1
+--
+-- >>> safeHead []
+-- Nothing
+safeHead :: [a] -> Maybe a
+safeHead = listToMaybe
+{-# INLINE safeHead #-}
+
+-- | Get the tail of a list.
+--
+-- ==== __Examples__
+--
+-- Basic usage:
+--
+-- >>> safeTail [1, 2, 3]
+-- [2, 3]
+--
+-- >>> safeTail []
+-- []
+safeTail :: [a] -> [a]
+safeTail [] = []
+safeTail (_:xs) = xs
+{-# INLINE safeTail #-}
+
 -- Note: orphan instances copied straight from Persistent documentation
 -- Note: we're taking advantage of PostgreSQL understanding UUID values,
 -- Note: Persistent is deprecating PersistDbSpecific:
