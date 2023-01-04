@@ -8,28 +8,17 @@ module Tuttifrutti.Log.Handle
 
 import           Tuttifrutti.Prelude
 
-import qualified Data.Aeson               as Json
-import qualified Data.Aeson.Encode.Pretty as Json
-import qualified Data.Aeson.Types         as Json
-import qualified Data.Text                as Text
-import qualified Data.Text.Lazy.Builder   as Text.Builder
-import qualified Data.Time                as Time
+import qualified Data.Aeson                 as Json
+import qualified Data.Aeson.Encode.Pretty   as Json
+import qualified Data.Aeson.Types           as Json
+import qualified Data.Text                  as Text
+import qualified Data.Text.Lazy.Builder     as Text.Builder
+import qualified Data.Time.Format.ISO8601   as Time
 import           System.Directory           (createDirectoryIfMissing)
 import qualified System.IO                  as IO
 import qualified System.IO.Temp             as Temp
-import qualified System.Log.FastLogger    as FastLogger
+import qualified System.Log.FastLogger      as FastLogger
 
--- some iso8601-related stuff, when we switch to time-1.9 this can be replaced
--- with just an import of 'Data.Time.Format.ISO8601'
-
-iso8601Format :: String
-iso8601Format = Time.iso8601DateFormat (Just "%H:%M:%S%z")
-
-formatShow :: Time.FormatTime t => String -> t -> String
-formatShow = Time.formatTime Time.defaultTimeLocale
-
-iso8601Show :: Time.FormatTime t => t -> String
-iso8601Show = formatShow iso8601Format
 
 data LogSeverity = LogTrace | LogInfo | LogWarning | LogError
   deriving (Show, Eq, Ord)
@@ -100,7 +89,7 @@ googleMessage :: LogEntry -> FastLogger.LogStr
 googleMessage LogEntry{..} =
   FastLogger.toLogStr $ Json.encode $ Json.object
     [ "message" .= logEntryMessage
-    , "timestamp" .= iso8601Show logEntryTimestamp
+    , "timestamp" .= Time.iso8601Show logEntryTimestamp
     , "severity" .= case logEntrySeverity of
                       LogInfo    -> "INFO"    :: Text
                       LogTrace   -> "DEBUG"   :: Text
@@ -114,7 +103,7 @@ googleMessage LogEntry{..} =
 devMessage :: LogEntry -> FastLogger.LogStr
 devMessage LogEntry{..} =
   FastLogger.toLogStr $ Text.Builder.toLazyText $ mconcat
-    [ Text.Builder.fromString $ iso8601Show logEntryTimestamp
+    [ Text.Builder.fromString $ Time.iso8601Show logEntryTimestamp
     , ": "
     , case logEntrySeverity of
         LogInfo    -> "INFO"
