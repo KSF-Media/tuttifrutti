@@ -5,113 +5,106 @@
 
 packages:
 - completed:
-    subdir: data-vcr
+    commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
+    git: https://github.com/KSF-Media/haskell-vcr
     name: data-vcr
-    version: 0.1.0.0
-    git: https://github.com/KSF-Media/haskell-vcr
     pantry-tree:
-      size: 257
       sha256: 5cff90061e6efff660b3a9732573f52d1f06945c6cefd65ae1acdd6b168a6e41
-    commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
-  original:
+      size: 257
     subdir: data-vcr
-    git: https://github.com/KSF-Media/haskell-vcr
+    version: 0.1.0.0
+  original:
     commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
+    git: https://github.com/KSF-Media/haskell-vcr
+    subdir: data-vcr
 - completed:
-    subdir: tasty-vcr
+    commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
+    git: https://github.com/KSF-Media/haskell-vcr
     name: tasty-vcr
-    version: 0.1.0.0
-    git: https://github.com/KSF-Media/haskell-vcr
     pantry-tree:
-      size: 331
       sha256: 1f0bbb6763f95c2fc6e55093b43408d266eb17647dc84a3e0e7b2142a7342096
-    commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
-  original:
+      size: 331
     subdir: tasty-vcr
-    git: https://github.com/KSF-Media/haskell-vcr
-    commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
-- completed:
-    subdir: http-client-vcr
-    name: http-client-vcr
     version: 0.1.0.0
+  original:
+    commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
     git: https://github.com/KSF-Media/haskell-vcr
+    subdir: tasty-vcr
+- completed:
+    commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
+    git: https://github.com/KSF-Media/haskell-vcr
+    name: http-client-vcr
     pantry-tree:
-      size: 277
       sha256: 2797f65a3d6caa9e58fc9ba182ca91712e2a3db298bebbed70b6bce0315d40d6
-    commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
-  original:
+      size: 277
     subdir: http-client-vcr
-    git: https://github.com/KSF-Media/haskell-vcr
+    version: 0.1.0.0
+  original:
     commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
+    git: https://github.com/KSF-Media/haskell-vcr
+    subdir: http-client-vcr
 - completed:
+    commit: 5186d5ced42f4bbb4647bf8ef645c8a7d8e4f026
+    git: https://github.com/KSF-Media/rapid
     name: rapid
-    version: 0.1.4
-    git: https://github.com/KSF-Media/rapid
     pantry-tree:
-      size: 451
       sha256: 66814237789c92b57fcf719b2a663965e359650d3bec1ed08d8b024998af4508
-    commit: 5186d5ced42f4bbb4647bf8ef645c8a7d8e4f026
+      size: 451
+    version: 0.1.4
   original:
+    commit: 5186d5ced42f4bbb4647bf8ef645c8a7d8e4f026
     git: https://github.com/KSF-Media/rapid
-    commit: 5186d5ced42f4bbb4647bf8ef645c8a7d8e4f026
 - completed:
-    subdir: raven-haskell
+    commit: 180088b26fb79515627644545955aed5c50d804a
+    git: https://gitlab.com/dpwiz/raven-haskell.git
     name: raven-haskell
-    version: 0.1.4.1
-    git: https://gitlab.com/vapaj/raven-haskell.git
     pantry-tree:
+      sha256: db502c43aeb7e8ba4a2eb0e180eff0c2a8e0e787d739449997d546cba3270b5b
       size: 680
-      sha256: c75c711063b0e9d1e1c306de98b617fefecaa209941cbfd86ef36ef33b01ba81
-    commit: 7531ee83759362af7a74aa2877f02478976c4748
-  original:
     subdir: raven-haskell
-    git: https://gitlab.com/vapaj/raven-haskell.git
-    commit: 7531ee83759362af7a74aa2877f02478976c4748
+    version: 0.1.4.1
+  original:
+    commit: 180088b26fb79515627644545955aed5c50d804a
+    git: https://gitlab.com/dpwiz/raven-haskell.git
+    subdir: raven-haskell
 - completed:
     hackage: aeson-diff-1.1.0.12@sha256:3a952f40c02afba1483b55b4e20101f52eca01f33857cbb363d0737b7d30fc31,3356
     pantry-tree:
-      size: 5086
       sha256: d44f3590e5e378a9ee34170028778150c561ce7c60a79155d90ec1a39cf88aac
+      size: 5086
   original:
     hackage: aeson-diff-1.1.0.12
 - completed:
-    hackage: extensible-0.8.3@sha256:2886978a81e9c2ff29a93caf7ae847a8b7724dc4ee22381c5d29ca8318c686c4,2955
-    pantry-tree:
-      size: 2041
-      sha256: 670fd3807d351e2668eb7c10d926c24501ef190e49e4a4624acc822b09b257b4
-  original:
-    hackage: extensible-0.8.3@sha256:2886978a81e9c2ff29a93caf7ae847a8b7724dc4ee22381c5d29ca8318c686c4,2955
-- completed:
     hackage: template-0.2.0.10@sha256:f822de4d34c45bc84b33a61bc112c15fedee6fa6dc414c62b10456395a868f85,987
     pantry-tree:
-      size: 339
       sha256: e9829c39501915bc47fda35069207b7a839f9fb929b81946e151e0dda8a7fda1
+      size: 339
   original:
     hackage: template-0.2.0.10@sha256:f822de4d34c45bc84b33a61bc112c15fedee6fa6dc414c62b10456395a868f85,987
 - completed:
     hackage: unjson-0.15.4@sha256:88efba019e9ebee2ed454ed92976e0906731c1d3932ed5b372db11dfe3ba5d74,3292
     pantry-tree:
-      size: 446
       sha256: 0cc32476d929f557483a785aecef5af112915f93be5fc290c484480ea521551c
+      size: 446
   original:
     hackage: unjson-0.15.4
 - completed:
     hackage: incremental-0.3.1@sha256:9c697bae4f7e5ceb144bde13e03ca2f36b4bc2d0c92bbc02e0a604231ee279c2,1153
     pantry-tree:
-      size: 370
       sha256: fd5f40352dbf1602babd2c5db2a120c26e57bbd5ad30b19ce24d04189f6a18d1
+      size: 370
   original:
     hackage: incremental-0.3.1@sha256:9c697bae4f7e5ceb144bde13e03ca2f36b4bc2d0c92bbc02e0a604231ee279c2,1153
 - completed:
     hackage: membership-0.0.1@sha256:6c4d4ab6e3fb3253c6c670e8a63f74454dc91be50b9f292d0b1355792190aee5,999
     pantry-tree:
-      size: 408
       sha256: b918a1a207108313b2bf453b0d9aa65122d9845c4b360c8ade46d3429ff1107a
+      size: 408
   original:
     hackage: membership-0.0.1@sha256:6c4d4ab6e3fb3253c6c670e8a63f74454dc91be50b9f292d0b1355792190aee5,999
 snapshots:
 - completed:
-    size: 618876
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/19/6.yaml
-    sha256: fb634b19f31da06684bb07ce02a20c75a3162138f279b388905b03ebd57bb50f
-  original: lts-19.6
+    sha256: a684cdbdf9304b325a503e0fe1d9648e9c18155ce4c7cfebbe8a7f93674e6295
+    size: 649106
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/20/5.yaml
+  original: lts-20.5
