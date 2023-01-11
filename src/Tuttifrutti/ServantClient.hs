@@ -30,6 +30,8 @@ createLoggingManager msg logHandle settings =
                 -- but this is all we have in this context
                 let requestId = decodeUtf8Lenient . snd <$> find (\(h, _) -> h == "X-Request-Id") (Http.requestHeaders r)
                 with logHandle $
+                    -- NB: this is executed _twice_ for all requests
+                    -- https://github.com/snoyberg/http-client/issues/350
                     Log.logInfo msg
                        [ "url" .= decodeUtf8Lenient (Http.path r)
                        , "method" .= decodeUtf8Lenient (Http.method r)
