@@ -21,9 +21,8 @@ import qualified Tuttifrutti.RequestId  as RequestId
 
 -- | Create a manager which logs all requests using the specified logger,
 --   adding request_id to the log message from the request headers.
---   msg should be eg. "Lettera -> Persona request"
-createLoggingManager :: MonadIO m => Text -> Log.Handle -> Http.ManagerSettings -> m Http.Manager
-createLoggingManager msg logHandle settings =
+createLoggingManager :: MonadIO m => Text -> Text -> Log.Handle -> Http.ManagerSettings -> m Http.Manager
+createLoggingManager fromService toService logHandle settings =
   Http.newManagerSettings $ settings
           { Http.managerModifyRequest = \r -> do
                 -- it would be super nice to grab the request id from anything else,
@@ -32,10 +31,12 @@ createLoggingManager msg logHandle settings =
                 with logHandle $
                     -- NB: this is executed _twice_ for all requests
                     -- https://github.com/snoyberg/http-client/issues/350
-                    Log.logInfo msg
+                    Log.logInfo (fromService <> " -> " <> toService <> " request")
                        [ "url" .= decodeUtf8Lenient (Http.path r)
                        , "method" .= decodeUtf8Lenient (Http.method r)
                        , "request_id" .= fromMaybe "[none]" requestId
+                       , "from" .= fromService
+                       , "to" .= toService
                        ]
                 Http.managerModifyRequest Http.defaultManagerSettings r
           }
@@ -47,9 +48,9 @@ unwrapAesonString _ = Nothing
 -- | Wrap a ClientEnv so that it adds the X-Request-ID header based on
 --   the current requestId in the logger
 wrapClientEnv :: MonadIO m => ClientEnv -> Log.Handle -> m ClientEnv
-wrapClientEnv ClientEnv {..} logger = do
+wrapClientEnv ClientEnv{..} logger = do
   requestId <- fromMaybeM ((\ (RequestId.RequestId t) -> t) <$> RequestId.random)
-    $ find (\(k, _) -> toText k == "request_id") (Log.handleData logger) >>= (unwrapAesonString . snd)
+    $ find (\(k, _) -> toText k == "request_id") (Log.handleData logger) >>= unwrapAesonString . snd
 
   pure ClientEnv
         { makeClientRequest = \url request -> makeClientRequest url (addHeader "X-Request-ID" requestId request)
