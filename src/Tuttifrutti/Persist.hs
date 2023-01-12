@@ -1,4 +1,6 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE OverloadedStrings   #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 module Tuttifrutti.Persist
   ( module Database.Persist
   , module Database.Persist.Postgresql
@@ -12,12 +14,17 @@ import qualified Control.Monad.Logger                as MonadLogger
 import qualified Data.Has                            as Has
 import           Data.Text.Encoding                  (decodeUtf8)
 import           Database.Persist
-import           Database.Persist.Postgresql         (Migration, Sql, SqlBackend,
-                                                      createPostgresqlPool, parseMigration,
-                                                      runMigrationSilent, runSqlConn, runSqlPool)
+import           Database.Persist.Postgresql         (Migration, Sql,
+                                                      SqlBackend,
+                                                      createPostgresqlPool,
+                                                      parseMigration,
+                                                      runMigrationSilent,
+                                                      runSqlConn, runSqlPool)
 import qualified Database.Persist.Postgresql         as Persist
 import           Database.Persist.Sql.Types.Internal (LogFunc, connLogFunc)
 import           Database.PostgreSQL.Simple          (SqlError (..))
+import           GHC.Records
+import           GHC.TypeLits
 import qualified System.Log.FastLogger               as FastLogger
 
 import qualified Tuttifrutti.Log                     as Log
@@ -28,6 +35,9 @@ import qualified Tuttifrutti.Postgres                as Postgres
 
 type MonadPersist env m =
   (MonadReader env m, Has Handle env, MonadUnliftIO m, MonadIO m, Log.MonadLog env m)
+
+type MonadPersist' env m =
+  (MonadReader env m, MonadUnliftIO m, MonadIO m, Log.MonadLog env m)
 
 newtype Handle = Handle { handlePool :: Pool SqlBackend }
 
@@ -110,3 +120,56 @@ transact m = do
       local $ \conn -> conn
         { connLogFunc = logFunc logHandle }
 
+
+t'
+  :: forall field field' env m a.
+  ( HasField field env (Const Handle field')
+  , CmpSymbol field field' ~ 'EQ
+  , MonadPersist' env m
+  )
+  => QueryT m a
+  -> m a
+t'  m = do
+  Handle{..} <- do
+    env :: env <- ask
+    pure $ getConst $ getField @field env
+  logHandle <- asks Has.getter
+  runSqlPool
+    -- we update the logging function to use current log handle
+    (setLogFunc logHandle m)
+    handlePool
+  where
+    setLogFunc logHandle =
+      local $ \conn -> conn
+        { connLogFunc = logFunc logHandle }
+
+
+
+
+-- transact' :: (MonadPersist' env m) => QueryT m b -> m b
+-- transact' m = do
+--   Handle{..} <- asks Has.getter
+--   logHandle <- asks Has.getter
+--   runSqlPool
+--     -- we update the logging function to use current log handle
+--     (setLogFunc logHandle m)
+--     handlePool
+--   where
+--     setLogFunc logHandle =
+--       local $ \conn -> conn
+--         { connLogFunc = logFunc logHandle }
+
+
+-- askField' :: forall x a m r. (HasField x r a, MonadReader r m) => m a
+-- askField' =
+--     asks (getFieldWithProxy (Proxy :: Proxy x))
+--   where
+--     getFieldWithProxy :: forall proxy. proxy x -> r -> a
+--     getFieldWithProxy = const getField
+
+-- askField' :: forall x a m r. (HasField x r a, MonadReader r m) => m a
+-- askField' =
+--     asks (getFieldWithProxy (Proxy :: Proxy x))
+--   where
+--     getFieldWithProxy :: forall proxy. proxy x -> r -> a
+--     getFieldWithProxy = const (getField @x)
