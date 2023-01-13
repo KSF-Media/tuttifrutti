@@ -120,16 +120,16 @@ transact m = do
       local $ \conn -> conn
         { connLogFunc = logFunc logHandle }
 
-
-t'
-  :: forall field field' env m a.
-  ( HasField field env (Const Handle field')
-  , CmpSymbol field field' ~ 'EQ
+transact'
+  :: forall service service' field env m a.
+  ( AppendSymbol "envPersist" service ~ field
+  , HasField field env (Const Handle service')
+  , CmpSymbol service service' ~ 'EQ
   , MonadPersist' env m
   )
   => QueryT m a
   -> m a
-t'  m = do
+transact'  m = do
   Handle{..} <- do
     env :: env <- ask
     pure $ getConst $ getField @field env
@@ -142,34 +142,3 @@ t'  m = do
     setLogFunc logHandle =
       local $ \conn -> conn
         { connLogFunc = logFunc logHandle }
-
-
-
-
--- transact' :: (MonadPersist' env m) => QueryT m b -> m b
--- transact' m = do
---   Handle{..} <- asks Has.getter
---   logHandle <- asks Has.getter
---   runSqlPool
---     -- we update the logging function to use current log handle
---     (setLogFunc logHandle m)
---     handlePool
---   where
---     setLogFunc logHandle =
---       local $ \conn -> conn
---         { connLogFunc = logFunc logHandle }
-
-
--- askField' :: forall x a m r. (HasField x r a, MonadReader r m) => m a
--- askField' =
---     asks (getFieldWithProxy (Proxy :: Proxy x))
---   where
---     getFieldWithProxy :: forall proxy. proxy x -> r -> a
---     getFieldWithProxy = const getField
-
--- askField' :: forall x a m r. (HasField x r a, MonadReader r m) => m a
--- askField' =
---     asks (getFieldWithProxy (Proxy :: Proxy x))
---   where
---     getFieldWithProxy :: forall proxy. proxy x -> r -> a
---     getFieldWithProxy = const (getField @x)
