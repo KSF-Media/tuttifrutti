@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ea9d07c0aa86d341036909eb400cf20424fc3033b436757557eec4493536333e
+-- hash: 0779cd39e2db1803073000b79cfd10c58ebf0c59b05dbad3bf285288ce0d8db8
 
 name:           tuttifrutti
 version:        0.1.0.0
@@ -60,9 +60,9 @@ library
       Tuttifrutti.RequestId
       Tuttifrutti.Sentry
       Tuttifrutti.Servant
+      Tuttifrutti.Servant.Client
       Tuttifrutti.Servant.Health
       Tuttifrutti.Servant.Redirect
-      Tuttifrutti.ServantClient
       Tuttifrutti.Swagger
       Tuttifrutti.Template
       Tuttifrutti.TestPrelude
@@ -241,9 +241,9 @@ test-suite spec
       Tuttifrutti.RequestId
       Tuttifrutti.Sentry
       Tuttifrutti.Servant
+      Tuttifrutti.Servant.Client
       Tuttifrutti.Servant.Health
       Tuttifrutti.Servant.Redirect
-      Tuttifrutti.ServantClient
       Tuttifrutti.Swagger
       Tuttifrutti.Template
       Tuttifrutti.TestPrelude

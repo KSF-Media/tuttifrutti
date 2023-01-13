@@ -3,7 +3,7 @@
 --   We need to wrap some Servant.Client functions so we can
 --   log requests and pass the X-Request-Id header forward.
 
-module Tuttifrutti.ServantClient
+module Tuttifrutti.Servant.Client
   ( createLoggingManager
   , wrapClientEnv
   ) where
