@@ -24,13 +24,14 @@ import qualified Tuttifrutti.RequestId  as RequestId
 createLoggingManager :: MonadIO m => Text -> Text -> Log.Handle -> Http.ManagerSettings -> m Http.Manager
 createLoggingManager fromService toService logHandle settings =
   Http.newManagerSettings $ settings
-          { Http.managerModifyRequest = \r -> do
+          -- The function 'managerModifyRequest' would be the best-looking function
+          -- for this, but it's executed multiple times per request
+          -- https://github.com/snoyberg/http-client/issues/350
+          { Http.managerWrapException = \r e -> do
                 -- it would be super nice to grab the request id from anything else,
                 -- but this is all we have in this context
                 let requestId = decodeUtf8Lenient . snd <$> find (\(h, _) -> h == "X-Request-Id") (Http.requestHeaders r)
                 with logHandle $
-                    -- NB: this is executed _twice_ for all requests
-                    -- https://github.com/snoyberg/http-client/issues/350
                     Log.logInfo (fromService <> " -> " <> toService <> " request")
                        [ "url" .= decodeUtf8Lenient (Http.path r)
                        , "method" .= decodeUtf8Lenient (Http.method r)
@@ -38,7 +39,7 @@ createLoggingManager fromService toService logHandle settings =
                        , "from" .= fromService
                        , "to" .= toService
                        ]
-                Http.managerModifyRequest Http.defaultManagerSettings r
+                Http.managerWrapException Http.defaultManagerSettings r e
           }
 
 unwrapAesonString :: Aeson.Value -> Maybe Text
