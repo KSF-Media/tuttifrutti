@@ -3,13 +3,14 @@ module Tuttifrutti.Log.Handle
   , Handle(..)
   , newHandle, waitHandle, closeHandle
   , newStdoutHandle, newFileHandle, newDirectoryHandle
-  , googleMessage, devMessage
+  , googleMessage, devMessage, devMessageCompact
   ) where
 
 import           Tuttifrutti.Prelude
 
 import qualified Data.Aeson                 as Json
 import qualified Data.Aeson.Encode.Pretty   as Json
+import qualified Data.Aeson.Text            as Json
 import qualified Data.Aeson.Types           as Json
 import qualified Data.Text                  as Text
 import qualified Data.Text.Lazy.Builder     as Text.Builder
@@ -119,6 +120,25 @@ devMessage LogEntry{..} =
     , Text.Builder.fromText logEntryMessage
     , " "
     , Json.encodePrettyToTextBuilder $ Json.object logEntryData
+    ]
+
+devMessageCompact :: Formatter
+devMessageCompact LogEntry{..} =
+  FastLogger.toLogStr $ Text.Builder.toLazyText $ mconcat
+    [ Text.Builder.fromString $ Time.iso8601Show logEntryTimestamp
+    , ": "
+    , case logEntrySeverity of
+        LogInfo    -> "INFO"
+        LogTrace   -> "DEBUG"
+        LogWarning -> "WARNING"
+        LogError   -> "ERROR"
+    , " "
+    , Text.Builder.fromText
+        $ Text.intercalate "/" (logEntryComponent : logEntryDomain)
+    , " — "
+    , Text.Builder.fromText logEntryMessage
+    , " "
+    , Json.encodeToTextBuilder $ Json.object logEntryData
     ]
 
 -- | Close the handle. Flushes the logging output and permanently closes it.
