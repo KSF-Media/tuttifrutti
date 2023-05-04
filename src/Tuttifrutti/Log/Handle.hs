@@ -32,15 +32,17 @@ data LogEntry = LogEntry
   , logEntryTimestamp :: UTCTime
   } deriving (Show, Eq)
 
+type Formatter = LogEntry -> FastLogger.LogStr
+
 data Handle = Handle
   { handleLoggerSet :: FastLogger.LoggerSet
-  , handleFormat    :: LogEntry -> FastLogger.LogStr
+  , handleFormat    :: Formatter
   , handleComponent :: Text
   , handleDomain    :: [Text]
   , handleData      :: [Json.Pair]
   }
 
-newHandle :: (LogEntry -> FastLogger.LogStr) -> Text -> FastLogger.LoggerSet -> Handle
+newHandle :: Formatter -> Text -> FastLogger.LoggerSet -> Handle
 newHandle handleFormat handleComponent handleLoggerSet = Handle{..}
   where
     handleDomain    = []
@@ -48,7 +50,7 @@ newHandle handleFormat handleComponent handleLoggerSet = Handle{..}
 
 newStdoutHandle
   :: Text
-  -> (LogEntry -> FastLogger.LogStr)
+  -> (Formatter)
   -> IO Handle
 newStdoutHandle handleComponent handleFormat =
   newHandle handleFormat handleComponent <$> do
@@ -59,7 +61,7 @@ newStdoutHandle handleComponent handleFormat =
 newFileHandle
   :: FilePath
   -> Text
-  -> (LogEntry -> FastLogger.LogStr)
+  -> Formatter
   -> IO Handle
 newFileHandle path handleComponent formatLogEntry = do
   newHandle formatLogEntry handleComponent
@@ -85,7 +87,7 @@ newDirectoryHandle dir template handleComponent = do
 --   The structure we should use is quite undocumented,
 --   but on the internet you can find traces on how to do it, e.g. here:
 --   https://github.com/GoogleCloudPlatform/fluent-plugin-google-cloud/issues/99
-googleMessage :: LogEntry -> FastLogger.LogStr
+googleMessage :: Formatter
 googleMessage LogEntry{..} =
   FastLogger.toLogStr $ Json.encode $ Json.object
     [ "message" .= logEntryMessage
@@ -100,7 +102,7 @@ googleMessage LogEntry{..} =
     ]
   where
 
-devMessage :: LogEntry -> FastLogger.LogStr
+devMessage :: Formatter
 devMessage LogEntry{..} =
   FastLogger.toLogStr $ Text.Builder.toLazyText $ mconcat
     [ Text.Builder.fromString $ Time.iso8601Show logEntryTimestamp
