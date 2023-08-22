@@ -119,17 +119,3 @@ dropRange range Storage{..} =
     elements = HashPSQ.toList storageQueue
     (dropped, selected) =
       partition (\(_, p, _) -> Range.inRange range p) elements
-
--- | Like 'modifyTVar'' but the function is a simple state transition that can
--- return a side value which is passed on as the result of the 'STM'.
---
--- Available @since 2.5.0
---
--- TODO: remove once stm-2.5.0 arrives to LTS
-stateTVar :: TVar s -> (s -> (a, s)) -> STM a
-stateTVar var f = do
-   s <- readTVar var
-   let (a, s') = f s -- since we destructure this, we are strict in f
-   writeTVar var s'
-   return a
-{-# INLINE stateTVar #-}
