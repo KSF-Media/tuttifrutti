@@ -1,7 +1,9 @@
-resolver: lts-21.8
+resolver: lts-21.7
 packages:
   - .
 extra-deps:
+  - git: https://github.com/KSF-Media/haskell-template
+    commit: 792b8a5e96cd3cb92f15f761f69105b928043d72
   - git: https://github.com/KSF-Media/haskell-vcr
     commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
     subdirs:
@@ -14,7 +16,6 @@ extra-deps:
     commit: 180088b26fb79515627644545955aed5c50d804a
     subdirs:
       - raven-haskell
-  - template-0.2.0.10@sha256:f822de4d34c45bc84b33a61bc112c15fedee6fa6dc414c62b10456395a868f85,987
 allow-newer: true
 nix:
   enable: false

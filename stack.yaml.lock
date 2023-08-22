@@ -5,6 +5,17 @@
 
 packages:
 - completed:
+    commit: 792b8a5e96cd3cb92f15f761f69105b928043d72
+    git: https://github.com/KSF-Media/haskell-template
+    name: template
+    pantry-tree:
+      sha256: 8424d01f0b656617795c6e0492457245c3f142aacbb5a8ab5a55979e59c810af
+      size: 437
+    version: 0.2.0.10
+  original:
+    commit: 792b8a5e96cd3cb92f15f761f69105b928043d72
+    git: https://github.com/KSF-Media/haskell-template
+- completed:
     commit: 827cc172da3910b19676dfb5263a1d43fd38edf4
     git: https://github.com/KSF-Media/haskell-vcr
     name: data-vcr
@@ -67,16 +78,9 @@ packages:
     commit: 180088b26fb79515627644545955aed5c50d804a
     git: https://gitlab.com/dpwiz/raven-haskell.git
     subdir: raven-haskell
-- completed:
-    hackage: template-0.2.0.10@sha256:f822de4d34c45bc84b33a61bc112c15fedee6fa6dc414c62b10456395a868f85,987
-    pantry-tree:
-      sha256: e9829c39501915bc47fda35069207b7a839f9fb929b81946e151e0dda8a7fda1
-      size: 339
-  original:
-    hackage: template-0.2.0.10@sha256:f822de4d34c45bc84b33a61bc112c15fedee6fa6dc414c62b10456395a868f85,987
 snapshots:
 - completed:
-    sha256: 0be74c2dd964ab0e8887c1ece93b7c02e1cc2af11f5e3cc334300a5871e73917
-    size: 640028
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/21/8.yaml
-  original: lts-21.8
+    sha256: 23bb9bb355bfdb1635252e120a29b712f0d5e8a6c6a65c5ab5bd6692f46c438e
+    size: 640457
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/21/7.yaml
+  original: lts-21.7
