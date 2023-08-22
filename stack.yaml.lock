@@ -68,43 +68,15 @@ packages:
     git: https://gitlab.com/dpwiz/raven-haskell.git
     subdir: raven-haskell
 - completed:
-    hackage: aeson-diff-1.1.0.12@sha256:3a952f40c02afba1483b55b4e20101f52eca01f33857cbb363d0737b7d30fc31,3356
-    pantry-tree:
-      sha256: d44f3590e5e378a9ee34170028778150c561ce7c60a79155d90ec1a39cf88aac
-      size: 5086
-  original:
-    hackage: aeson-diff-1.1.0.12
-- completed:
     hackage: template-0.2.0.10@sha256:f822de4d34c45bc84b33a61bc112c15fedee6fa6dc414c62b10456395a868f85,987
     pantry-tree:
       sha256: e9829c39501915bc47fda35069207b7a839f9fb929b81946e151e0dda8a7fda1
       size: 339
   original:
     hackage: template-0.2.0.10@sha256:f822de4d34c45bc84b33a61bc112c15fedee6fa6dc414c62b10456395a868f85,987
-- completed:
-    hackage: unjson-0.15.4@sha256:88efba019e9ebee2ed454ed92976e0906731c1d3932ed5b372db11dfe3ba5d74,3292
-    pantry-tree:
-      sha256: 0cc32476d929f557483a785aecef5af112915f93be5fc290c484480ea521551c
-      size: 446
-  original:
-    hackage: unjson-0.15.4
-- completed:
-    hackage: incremental-0.3.1@sha256:9c697bae4f7e5ceb144bde13e03ca2f36b4bc2d0c92bbc02e0a604231ee279c2,1153
-    pantry-tree:
-      sha256: fd5f40352dbf1602babd2c5db2a120c26e57bbd5ad30b19ce24d04189f6a18d1
-      size: 370
-  original:
-    hackage: incremental-0.3.1@sha256:9c697bae4f7e5ceb144bde13e03ca2f36b4bc2d0c92bbc02e0a604231ee279c2,1153
-- completed:
-    hackage: membership-0.0.1@sha256:6c4d4ab6e3fb3253c6c670e8a63f74454dc91be50b9f292d0b1355792190aee5,999
-    pantry-tree:
-      sha256: b918a1a207108313b2bf453b0d9aa65122d9845c4b360c8ade46d3429ff1107a
-      size: 408
-  original:
-    hackage: membership-0.0.1@sha256:6c4d4ab6e3fb3253c6c670e8a63f74454dc91be50b9f292d0b1355792190aee5,999
 snapshots:
 - completed:
-    sha256: a684cdbdf9304b325a503e0fe1d9648e9c18155ce4c7cfebbe8a7f93674e6295
-    size: 649106
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/20/5.yaml
-  original: lts-20.5
+    sha256: 0be74c2dd964ab0e8887c1ece93b7c02e1cc2af11f5e3cc334300a5871e73917
+    size: 640028
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/21/8.yaml
+  original: lts-21.8

@@ -1,4 +1,4 @@
-resolver: lts-20.5
+resolver: lts-21.8
 packages:
   - .
 extra-deps:
@@ -14,11 +14,7 @@ extra-deps:
     commit: 180088b26fb79515627644545955aed5c50d804a
     subdirs:
       - raven-haskell
-  - aeson-diff-1.1.0.12
   - template-0.2.0.10@sha256:f822de4d34c45bc84b33a61bc112c15fedee6fa6dc414c62b10456395a868f85,987
-  - unjson-0.15.4
-  - incremental-0.3.1@sha256:9c697bae4f7e5ceb144bde13e03ca2f36b4bc2d0c92bbc02e0a604231ee279c2,1153
-  - membership-0.0.1@sha256:6c4d4ab6e3fb3253c6c670e8a63f74454dc91be50b9f292d0b1355792190aee5,999
 allow-newer: true
 nix:
   enable: false

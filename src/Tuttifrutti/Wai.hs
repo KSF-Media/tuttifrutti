@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-deprecations #-} -- Ignore deprecation of Wai.requestBody
 module Tuttifrutti.Wai where
 
 import           Tuttifrutti.Prelude

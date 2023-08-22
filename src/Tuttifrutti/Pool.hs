@@ -25,6 +25,9 @@ defaultConfig = Config
   , configResourcesMax  = 10
   }
 
+-- | TODO: migrate to Data.Pool.newPool and check to 
+-- | see if we could use newPool directly in our projects
+-- | instead of this helper function.
 -- | Same as 'Data.Pool.createPool' but takes nicer 'Config' type.
 createPool
   :: (MonadUnliftIO m, MonadMask m)
