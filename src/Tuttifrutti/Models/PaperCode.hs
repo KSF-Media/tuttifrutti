@@ -71,6 +71,7 @@ toPaperCode paperCodeText =
     "ON"     -> ON
     "ÖN"     -> ON
     "ÖNY"    -> ON
+    "BBL"    -> ON
     "VN"     -> VN
     "HT"     -> HT
     "JUNIOR" -> JUNIOR
